@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,CAAC;EACA,OAAO,EAAC,CAAC;EACT,MAAM,EAAC,CAAC;EAER,UAAU,EAAE,UAAU;;AAGvB,IAAI;EACH,SAAS,EAAC,KAAK;;ACRhB,KAAK;EACJ,OAAO,EAAE,YAAY;EAErB,MAAM,EAAC,cAAc;EACrB,OAAO,EAAC,GAAG;;ACJZ,KAAK;EACJ,OAAO,EAAC,GAAG;EACX,MAAM,EAAC,OAAO;EACd,MAAM,EAAE,cAAc;;ACHvB,MAAM;EACL,OAAO,EAAC,IAAI;EACZ,cAAc,EAAE,GAAG;EAEnB,WAAW,EAAE,UAAU",
+"sources": ["../scss/_reset.scss","../scss/_list.scss","../scss/_card.scss","../scss/_board.scss"],
+"names": [],
+"file": "all.css"
+}

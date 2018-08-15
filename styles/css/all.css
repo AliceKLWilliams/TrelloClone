@@ -1,0 +1,24 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box; }
+
+body {
+  font-size: 62.5%; }
+
+.list {
+  display: inline-block;
+  border: 1px solid #ccc;
+  padding: 2em; }
+
+.card {
+  padding: 1em;
+  margin: 1em 0em;
+  border: 1px solid #aaa; }
+
+.board {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; }
+
+/*# sourceMappingURL=all.css.map */
