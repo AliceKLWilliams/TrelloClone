@@ -14,7 +14,7 @@ body {
 .card {
   padding: 1em;
   margin: 1em 0em;
-  border: 1px solid #aaa; }
+  background-color: #eee; }
 
 .board {
   display: flex;
