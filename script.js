@@ -62,9 +62,40 @@ function addCard(e) {
 
 	const cardTitle = document.createElement("p");
 	cardTitle.textContent = list.querySelector(".new__text").value;
-	cardTitle.setAttribute("contenteditable", "true");
+
+
+	const editBttn = document.createElement("button");
+	editBttn.classList.add("card__edit");
+	const editIcon = document.createElement("i");
+	editIcon.classList.add("fa", "fa-pen");
+
+	editBttn.appendChild(editIcon);
+	editBttn.addEventListener("click", editCard);
+
+	const confirmBttn = document.createElement("button");
+	confirmBttn.classList.add("card__confirm");
+	const confirmIcon = document.createElement("i");
+	confirmIcon.classList.add("fa", "fa-check");
+
+	confirmBttn.appendChild(confirmIcon);
+	confirmBttn.addEventListener("click", confirmEdit);
+
+	confirmBttn.style.display = "none";
+
+	const cancelBttn = document.createElement("button");
+	cancelBttn.classList.add("card__cancel");
+	const cancelIcon = document.createElement("i");
+	cancelIcon.classList.add("fa", "fa-times");
+
+	cancelBttn.appendChild(cancelIcon);
+	cancelBttn.addEventListener("click", cancelEdit);
+
+	cancelBttn.style.display = "none";
 
 	newCard.appendChild(cardTitle);
+	newCard.appendChild(editBttn);
+	newCard.appendChild(confirmBttn);
+	newCard.appendChild(cancelBttn);
 
 	newCard.addEventListener("dragenter", dragEnter);
 	newCard.addEventListener("dragleave", dragLeave);
@@ -101,4 +132,63 @@ function dragEnter(event){
 
 function dragLeave(event){
 	event.target.style.borderTop = "none";
+}
+
+function editCard(){
+	event.stopPropagation();
+	let card = event.currentTarget.parentElement;
+
+	card.setAttribute("draggable", "false");
+
+	let currValue = card.querySelector("p").textContent;
+
+	card.querySelector("p").style.display = "none";
+
+	let editText = document.createElement("input");
+	editText.value = currValue;
+
+	card.insertBefore(editText, event.currentTarget);
+
+	event.currentTarget.style.display = "none";
+
+	card.querySelector(".card__confirm").style.display = "inline-block";
+	card.querySelector(".card__cancel").style.display = "inline-block";
+}
+
+function confirmEdit(event){
+	let card = event.currentTarget.parentElement;
+	let editText = card.querySelector("input");
+
+	let newVal = editText.value;
+
+	card.removeChild(editText);
+
+	let cardName = card.querySelector("p");
+	cardName.textContent = newVal;
+
+	cardName.style.display = "inline-block";
+
+	event.currentTarget.style.display = "none";
+	card.querySelector(".card__cancel").style.display = "none";
+	card.querySelector(".card__edit").style.display = "inline-block";
+
+	card.setAttribute("draggable", "true");
+
+}
+
+function cancelEdit(event){
+	let card = event.currentTarget.parentElement;
+
+	let editText = card.querySelector("input");
+
+	card.removeChild(editText);
+
+	let cardName = card.querySelector("p");
+	cardName.style.display = "inline-block";
+
+	event.currentTarget.style.display = "none";
+	card.querySelector(".card__confirm").style.display = "none";
+	card.querySelector(".card__edit").style.display = "inline-block";
+
+	card.setAttribute("draggable", "true");
 }

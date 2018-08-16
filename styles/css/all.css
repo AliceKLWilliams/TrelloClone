@@ -24,7 +24,11 @@ p {
 
 .card {
   padding: 1em 0em;
-  margin: 1em 0em; }
+  margin: 1em 0em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center; }
 
 .board {
   display: flex;
