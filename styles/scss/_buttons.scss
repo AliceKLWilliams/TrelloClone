@@ -1,0 +1,12 @@
+button{
+	background:white;
+	border:none;
+
+	padding:0.5em;
+
+	cursor: pointer;
+
+	&:hover{
+		color:#777;
+	}
+}

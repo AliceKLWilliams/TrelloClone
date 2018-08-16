@@ -1,4 +1,5 @@
 const board = document.querySelector(".board");
+const listCopy = document.querySelector(".list").cloneNode(true);
 
 const listAddBttns = document.querySelectorAll(".list__add");
 
@@ -10,31 +11,8 @@ let srcCard = null;
 listAddBttns.forEach(bttn => {
 	bttn.addEventListener("click", () => {
 
-		const newList = document.createElement("div");
-		newList.className = "list";
-
-		const listHeader = document.createElement("div");
-		listHeader.className = "list__header";
-
-		const listName = document.createElement("h1");
-		listName.className = "list__name"
-		listName.setAttribute("contenteditable", "true");
-		listName.textContent = "Enter List Name";
-
-		const listContent = document.createElement("div");
-		listContent.className = "list__content";
-
-		const listBttn = document.createElement("button");
-		listBttn.innerText = "+ Add new Card";
-		listBttn.className = "card__add";
-
-		listHeader.appendChild(listName);
-		listContent.appendChild(listBttn);
-
-		newList.appendChild(listHeader);
-		newList.appendChild(listContent);
-
-		listBttn.addEventListener("click", addCard);
+		const newList = listCopy.cloneNode(true);
+		newList.querySelector(".card__add").addEventListener("click", addCard);
 		newList.addEventListener("drop", handleDrop);
 
 		board.insertBefore(newList, bttn);
@@ -63,7 +41,13 @@ board.addEventListener("dragover", () => {
 function addCard(e) {
 	const bttn = e.target;
 
-	const list = bttn.parentElement;
+	const list = bttn.parentElement.parentElement;
+
+	if(list.querySelector(".new__text").value.length == 0){
+		return;
+	}
+
+	const footer = list.querySelector(".list__footer");
 
 	const newCard = document.createElement("div");
 	newCard.className = "card";
@@ -76,8 +60,8 @@ function addCard(e) {
 	
 	newCard.dataset.order = cards.length + 1;
 
-	const cardTitle = document.createElement("h1");
-	cardTitle.textContent = cards.length + 1;
+	const cardTitle = document.createElement("p");
+	cardTitle.textContent = list.querySelector(".new__text").value;
 	cardTitle.setAttribute("contenteditable", "true");
 
 	newCard.appendChild(cardTitle);
@@ -85,7 +69,10 @@ function addCard(e) {
 	newCard.addEventListener("dragenter", dragEnter);
 	newCard.addEventListener("dragleave", dragLeave);
 
-	list.insertBefore(newCard, bttn);
+	list.querySelector(".list__content").appendChild(newCard);
+
+	list.querySelector(".new__text").value = "";
+
 }
 
 function handleDrop(event) {
