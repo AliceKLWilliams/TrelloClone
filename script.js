@@ -269,3 +269,11 @@ function deleteCard(event){
 
 	saveContent();
 }
+
+function deleteList(event){
+	const list = event.currentTarget.parentNode.parentNode;
+
+	list.parentNode.removeChild(list);
+
+	saveContent();
+}
