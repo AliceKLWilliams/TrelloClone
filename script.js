@@ -1,22 +1,20 @@
 const board = document.querySelector(".board");
 const listCopy = document.querySelector(".list").cloneNode(true);
 
-const listAddBttns = document.querySelectorAll(".list__add");
-
 document.querySelector(".card__add").addEventListener("click", addCard);
 document.querySelector(".list").addEventListener("drop", handleDrop);
 
 let srcCard = null;
 
-listAddBttns.forEach(bttn => {
-	bttn.addEventListener("click", () => {
+window.onload = loadData;
 
-		const newList = listCopy.cloneNode(true);
-		newList.querySelector(".card__add").addEventListener("click", addCard);
-		newList.addEventListener("drop", handleDrop);
+const listAdd = document.querySelector(".list__add");
 
-		board.insertBefore(newList, bttn);
-	});
+
+listAdd.addEventListener("click", () => {
+	const numLists = document.querySelectorAll(".list").length;
+
+	createList(`List ${numLists+1}`, []);
 });
 
 
@@ -47,63 +45,11 @@ function addCard(e) {
 		return;
 	}
 
-	const footer = list.querySelector(".list__footer");
+	let cardName = list.querySelector(".new__text").value;
 
-	const newCard = document.createElement("div");
-	newCard.className = "card";
-	newCard.setAttribute("draggable", "true");
-
-	const children = list.children;
-	const cards = [...children].filter(card => {
-		return card.classList.contains("card");
-	});
-	
-	newCard.dataset.order = cards.length + 1;
-
-	const cardTitle = document.createElement("p");
-	cardTitle.textContent = list.querySelector(".new__text").value;
-
-
-	const editBttn = document.createElement("button");
-	editBttn.classList.add("card__edit");
-	const editIcon = document.createElement("i");
-	editIcon.classList.add("fa", "fa-pen");
-
-	editBttn.appendChild(editIcon);
-	editBttn.addEventListener("click", editCard);
-
-	const confirmBttn = document.createElement("button");
-	confirmBttn.classList.add("card__confirm");
-	const confirmIcon = document.createElement("i");
-	confirmIcon.classList.add("fa", "fa-check");
-
-	confirmBttn.appendChild(confirmIcon);
-	confirmBttn.addEventListener("click", confirmEdit);
-
-	confirmBttn.style.display = "none";
-
-	const cancelBttn = document.createElement("button");
-	cancelBttn.classList.add("card__cancel");
-	const cancelIcon = document.createElement("i");
-	cancelIcon.classList.add("fa", "fa-times");
-
-	cancelBttn.appendChild(cancelIcon);
-	cancelBttn.addEventListener("click", cancelEdit);
-
-	cancelBttn.style.display = "none";
-
-	newCard.appendChild(cardTitle);
-	newCard.appendChild(editBttn);
-	newCard.appendChild(confirmBttn);
-	newCard.appendChild(cancelBttn);
-
-	newCard.addEventListener("dragenter", dragEnter);
-	newCard.addEventListener("dragleave", dragLeave);
-
-	list.querySelector(".list__content").appendChild(newCard);
+	createCard(cardName, list);
 
 	list.querySelector(".new__text").value = "";
-
 }
 
 function handleDrop(event) {
@@ -118,6 +64,8 @@ function handleDrop(event) {
 		list.querySelector(".list__content").insertBefore(element, event.target);
 		event.target.style.borderTop = "none";
 	}
+
+	saveContent();
 }
 
 function dragEnter(event){
@@ -174,6 +122,8 @@ function confirmEdit(event){
 
 	card.setAttribute("draggable", "true");
 
+	saveContent();
+
 }
 
 function cancelEdit(event){
@@ -191,4 +141,112 @@ function cancelEdit(event){
 	card.querySelector(".card__edit").style.display = "inline-block";
 
 	card.setAttribute("draggable", "true");
+}
+
+function saveContent(){
+	localStorage.clear();
+
+	const lists = document.querySelectorAll(".list");
+
+	let storageObj = [];
+
+	lists.forEach(list => {
+		const cards = list.querySelectorAll(".card");
+		
+		let listObj = {}; 
+		let cardList = [];
+
+		cards.forEach(card => {
+			cardList.push(card.querySelector("p").textContent);
+		});
+
+		let listName = list.querySelector(".list__name").textContent;
+
+		listObj.name = listName;
+		listObj.cards = cardList;
+
+		storageObj.push(listObj);
+	});
+
+	localStorage.setItem("board", JSON.stringify(storageObj));
+}
+
+function loadData(){
+	let listArr = JSON.parse(localStorage.getItem("board"));
+	
+	if(listArr){
+		let originalList = document.querySelector(".list");
+		originalList.parentNode.removeChild(originalList);
+
+		listArr.forEach(listObj => {
+			createList(listObj.name, listObj.cards);
+		});
+	}
+
+}
+
+function createList(listName, cards){
+	const newList = listCopy.cloneNode(true);
+	newList.querySelector(".card__add").addEventListener("click", addCard);
+	newList.addEventListener("drop", handleDrop);
+
+	newList.querySelector(".list__name").textContent = listName;
+
+	board.insertBefore(newList, listAdd);
+
+	cards.forEach(card => {
+		createCard(card, newList);
+	});
+
+	saveContent();
+
+}
+
+function createCard(cardName, parentList){
+	const newCard = document.createElement("div");
+	newCard.className = "card";
+	newCard.setAttribute("draggable", "true");
+
+	const cardTitle = document.createElement("p");
+	cardTitle.textContent = cardName;
+
+	const editBttn = document.createElement("button");
+	editBttn.classList.add("card__edit");
+	const editIcon = document.createElement("i");
+	editIcon.classList.add("fa", "fa-pen");
+
+	editBttn.appendChild(editIcon);
+	editBttn.addEventListener("click", editCard);
+
+	const confirmBttn = document.createElement("button");
+	confirmBttn.classList.add("card__confirm");
+	const confirmIcon = document.createElement("i");
+	confirmIcon.classList.add("fa", "fa-check");
+
+	confirmBttn.appendChild(confirmIcon);
+	confirmBttn.addEventListener("click", confirmEdit);
+
+	confirmBttn.style.display = "none";
+
+	const cancelBttn = document.createElement("button");
+	cancelBttn.classList.add("card__cancel");
+	const cancelIcon = document.createElement("i");
+	cancelIcon.classList.add("fa", "fa-times");
+
+	cancelBttn.appendChild(cancelIcon);
+	cancelBttn.addEventListener("click", cancelEdit);
+
+	cancelBttn.style.display = "none";
+
+	newCard.appendChild(cardTitle);
+	newCard.appendChild(editBttn);
+	newCard.appendChild(confirmBttn);
+	newCard.appendChild(cancelBttn);
+
+	newCard.addEventListener("dragenter", dragEnter);
+	newCard.addEventListener("dragleave", dragLeave);
+
+	parentList.querySelector(".list__content").appendChild(newCard);
+
+	saveContent();
 }
