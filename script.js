@@ -84,7 +84,7 @@ function dragLeave(event){
 
 function editCard(){
 	event.stopPropagation();
-	let card = event.currentTarget.parentElement;
+	let card = event.currentTarget.parentElement.parentElement;
 
 	card.setAttribute("draggable", "false");
 
@@ -95,7 +95,7 @@ function editCard(){
 	let editText = document.createElement("input");
 	editText.value = currValue;
 
-	card.insertBefore(editText, event.currentTarget);
+	card.insertBefore(editText, card.querySelector(".card__bttns"));
 
 	event.currentTarget.style.display = "none";
 
@@ -105,7 +105,7 @@ function editCard(){
 }
 
 function confirmEdit(event){
-	let card = event.currentTarget.parentElement;
+	let card = event.currentTarget.parentElement.parentElement;
 	let editText = card.querySelector("input");
 
 	let newVal = editText.value;
@@ -129,7 +129,7 @@ function confirmEdit(event){
 }
 
 function cancelEdit(event){
-	let card = event.currentTarget.parentElement;
+	let card = event.currentTarget.parentElement.parentElement;
 
 	let editText = card.querySelector("input");
 
@@ -249,11 +249,16 @@ function createCard(cardName, parentList){
 
 	cancelBttn.style.display = "none";
 
+	const cardBtts = document.createElement("div");
+	cardBtts.classList.add("card__bttns");
+
 	newCard.appendChild(cardTitle);
-	newCard.appendChild(editBttn);
-	newCard.appendChild(deleteBttn);
-	newCard.appendChild(confirmBttn);
-	newCard.appendChild(cancelBttn);
+	cardBtts.appendChild(editBttn);
+	cardBtts.appendChild(deleteBttn);
+	cardBtts.appendChild(confirmBttn);
+	cardBtts.appendChild(cancelBttn);
+
+	newCard.appendChild(cardBtts);
 
 	newCard.addEventListener("dragenter", dragEnter);
 	newCard.addEventListener("dragleave", dragLeave);
@@ -264,7 +269,7 @@ function createCard(cardName, parentList){
 }
 
 function deleteCard(event){
-	let card = event.currentTarget.parentNode;
+	let card = event.currentTarget.parentNode.parentNode;
 	card.parentNode.removeChild(card);
 
 	saveContent();
