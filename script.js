@@ -99,6 +99,7 @@ function editCard(){
 
 	event.currentTarget.style.display = "none";
 
+	card.querySelector(".card__delete").style.display = "none";
 	card.querySelector(".card__confirm").style.display = "inline-block";
 	card.querySelector(".card__cancel").style.display = "inline-block";
 }
@@ -119,6 +120,7 @@ function confirmEdit(event){
 	event.currentTarget.style.display = "none";
 	card.querySelector(".card__cancel").style.display = "none";
 	card.querySelector(".card__edit").style.display = "inline-block";
+	card.querySelector(".card__delete").style.display = "inline-block";
 
 	card.setAttribute("draggable", "true");
 
@@ -139,6 +141,7 @@ function cancelEdit(event){
 	event.currentTarget.style.display = "none";
 	card.querySelector(".card__confirm").style.display = "none";
 	card.querySelector(".card__edit").style.display = "inline-block";
+	card.querySelector(".card__delete").style.display = "inline-block";
 
 	card.setAttribute("draggable", "true");
 }
@@ -218,6 +221,14 @@ function createCard(cardName, parentList){
 	editBttn.appendChild(editIcon);
 	editBttn.addEventListener("click", editCard);
 
+	const deleteBttn = document.createElement("button");
+	deleteBttn.classList.add("card__delete");
+	const deleteIcon = document.createElement("i");
+	deleteIcon.classList.add("fa", "fa-trash-alt");
+
+	deleteBttn.appendChild(deleteIcon);
+	deleteBttn.addEventListener("click", deleteCard);
+
 	const confirmBttn = document.createElement("button");
 	confirmBttn.classList.add("card__confirm");
 	const confirmIcon = document.createElement("i");
@@ -240,6 +251,7 @@ function createCard(cardName, parentList){
 
 	newCard.appendChild(cardTitle);
 	newCard.appendChild(editBttn);
+	newCard.appendChild(deleteBttn);
 	newCard.appendChild(confirmBttn);
 	newCard.appendChild(cancelBttn);
 
@@ -247,6 +259,13 @@ function createCard(cardName, parentList){
 	newCard.addEventListener("dragleave", dragLeave);
 
 	parentList.querySelector(".list__content").appendChild(newCard);
+
+	saveContent();
+}
+
+function deleteCard(event){
+	let card = event.currentTarget.parentNode;
+	card.parentNode.removeChild(card);
 
 	saveContent();
 }
