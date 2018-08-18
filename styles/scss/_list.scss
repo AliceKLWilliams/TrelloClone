@@ -8,6 +8,14 @@
 
 	background:white;
 
+	width:30em;
+
+	flex-shrink: 0;
+
+	&__add{
+		flex-shrink: 0;
+	}
+
 	&__header{
 		border-bottom: 1px solid #bebebe;
 		padding-bottom: 1em;

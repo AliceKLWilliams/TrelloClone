@@ -1,12 +1,8 @@
 .board{
-	display:flex;
+	display:inline-flex;
 	flex-direction: row;
 
 	align-items: flex-start;
 
-	background-color: #30e8bd;
-
-	height:100vh;
-	padding-top:10vh;
-	padding-left:5vw;
+	margin:10vh 5vh;
 }
