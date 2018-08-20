@@ -156,7 +156,9 @@ function editCard(){
 	let editText = document.createElement("input");
 	editText.value = currValue;
 
-	card.insertBefore(editText, card.querySelector(".card__bttns"));
+	let cardButtons = card.querySelector(".card__bttns");
+
+	cardButtons.parentNode.insertBefore(editText, cardButtons);
 
 	card.querySelector(".card__edit").classList.add("hidden");
 	card.querySelector(".card__delete").classList.add("hidden");
@@ -170,7 +172,7 @@ function confirmEdit(event){
 
 	let newVal = editText.value;
 
-	card.removeChild(editText);
+	editText.parentNode.removeChild(editText);
 
 	let cardName = card.querySelector("p");
 	cardName.textContent = newVal;
@@ -190,7 +192,7 @@ function cancelEdit(event){
 
 	let editText = card.querySelector("input");
 
-	card.removeChild(editText);
+	editText.parentNode.removeChild(editText);
 
 	let cardName = card.querySelector("p");
 	cardName.classList.remove("hidden");
