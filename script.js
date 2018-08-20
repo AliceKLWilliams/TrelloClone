@@ -3,7 +3,7 @@ const board = document.querySelector(".board");
 const originalCard = document.querySelector(".card--original");
 
 const cardCopy = originalCard.cloneNode(true);
-cardCopy.classList.remove(".card--original");
+cardCopy.classList.remove("card--original");
 originalCard.parentNode.removeChild(originalCard);
 
 const listCopy = document.querySelector(".list").cloneNode(true);
@@ -344,6 +344,7 @@ function editList(event){
 
 	list.querySelector(".list__delete").classList.add("hidden");
 	list.querySelector(".list__edit").classList.add("hidden");
+	list.querySelector(".list__sort").classList.add("hidden");
 
 	list.querySelector(".list__confirm").classList.remove("hidden");
 	list.querySelector(".list__cancel").classList.remove("hidden");
@@ -379,7 +380,42 @@ function confirmList(event){
 function showListNormalButtons(list){
 	list.querySelector(".list__delete").classList.remove("hidden");
 	list.querySelector(".list__edit").classList.remove("hidden");
+	list.querySelector(".list__sort").classList.remove("hidden");
 
 	list.querySelector(".list__confirm").classList.add("hidden");
 	list.querySelector(".list__cancel").classList.add("hidden");
+}
+
+function sortList(event){
+	const list = event.currentTarget.closest(".list");
+	const listContent = list.querySelector(".list__content");
+	const cards = [...listContent.children];
+
+	cards.sort(compareCards);
+
+	while(listContent.firstChild){
+		listContent.removeChild(listContent.firstChild);
+	}
+
+	cards.forEach(card => {
+		listContent.appendChild(card);
+	});
+}
+
+function compareCards(a, b){
+	let priorities = {
+		low:1,
+		medium:2,
+		high:3
+	};
+
+	if(priorities[a.dataset.category] > priorities[b.dataset.category]){
+		return -1;
+	}
+
+	if(priorities[a.dataset.category] < priorities[b.dataset.category]){
+		return 1;
+	}
+
+	return 0;
 }
