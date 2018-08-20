@@ -220,8 +220,12 @@ function saveContent(){
 		let listObj = {}; 
 		let cardList = [];
 
+
 		cards.forEach(card => {
-			cardList.push(card.querySelector("p").textContent);
+			cardList.push({
+				name: card.querySelector(".card__name").textContent,
+				category: card.dataset.category
+			});
 		});
 
 		let listName = list.querySelector(".list__name").textContent;
@@ -265,7 +269,7 @@ function createList(listName, cards){
 	board.insertBefore(newList, listAdd);
 
 	cards.forEach(card => {
-		createCard(card, "low", newList);
+		createCard(card.name, card.category, newList);
 	});
 
 	saveContent();
@@ -279,6 +283,8 @@ function createCard(cardName, category, parentList){
 
 	newCard.querySelector(".card__name").textContent = cardName;
 	newCard.querySelector(".card__category").classList.add(`card__category--${category}`);
+
+	newCard.dataset.category = category;
 
 	newCard.addEventListener("dragover", cardDragOver);
 
