@@ -74,10 +74,11 @@ function contentDrop(event) {
 	let data = event.dataTransfer.getData("text");
 	let element = document.querySelector(`div[data-time='${data}']`);
 
-	if(event.currentTarget.querySelectorAll(".card").length == 0){
+	let numCards = event.currentTarget.querySelectorAll(".card").length;
+
+	if(numCards == 0 || lastCard == null){
 		event.currentTarget.appendChild(element);
 	} else {
-
 		let card = lastCard;
 
 		let y = card.offsetTop;
