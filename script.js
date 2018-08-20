@@ -362,13 +362,13 @@ function confirmList(event){
 }
 
 function showNormalButtons(element){
-	element.querySelector(".bttns-normal").classList.remove("hidden");
-	element.querySelector(".bttns-edit").classList.add("hidden");
+	element.querySelector(".bttns--normal").classList.remove("hidden");
+	element.querySelector(".bttns--edit").classList.add("hidden");
 }
 
 function showEditButtons(element){
-	element.querySelector(".bttns-normal").classList.add("hidden");
-	element.querySelector(".bttns-edit").classList.remove("hidden");
+	element.querySelector(".bttns--normal").classList.add("hidden");
+	element.querySelector(".bttns--edit").classList.remove("hidden");
 }
 
 function sortList(event){
