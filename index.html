@@ -14,7 +14,7 @@
 		<div class="list">
 			<div class="list__header">
 				<h1 class="list__name">List 1</h1>
-				<div class="list__bttns">
+				<div class="bttns-normal">
 					<button class="list__edit" onclick="editList(event)">
 						<i class="fa fa-pen"></i>
 					</button>
@@ -25,11 +25,13 @@
 					<button class="list__sort" onclick="sortList(event)">
 						<i class="fa fa-sort"></i>
 					</button>
+				</div>
 
-					<button class="list__confirm hidden" onclick="confirmList(event)">
+				<div class="bttns-edit hidden">
+					<button class="list__confirm" onclick="confirmList(event)">
 						<i class="fa fa-check"></i>
 					</button>
-					<button class="list__cancel hidden" onclick="cancelList(event)">
+					<button class="list__cancel" onclick="cancelList(event)">
 						<i class="fa fa-times"></i>
 					</button>
 				</div>
@@ -42,19 +44,23 @@
 					<div class="card__content">
 
 						<p class="card__name">Card 1</p>
-						<div class="card__bttns">
+						<div class="bttns-normal">
 							<button class="card__edit" onclick="editCard(event)">
 								<i class="fa fa-pen"></i>
 							</button>
 							<button class="card__delete" onclick="deleteCard(event)">
 								<i class="fa fa-trash-alt"></i>
 							</button>
-							<button class="card__confirm hidden" onclick="confirmEdit(event)">
+						</div>
+
+						<div class="bttns-edit hidden">
+							<button class="card__confirm" onclick="confirmEdit(event)">
 								<i class="fa fa-check"></i>
 							</button>
-							<button class="card__cancel hidden" onclick="cancelEdit(event)">
+							<button class="card__cancel" onclick="cancelEdit(event)">
 								<i class="fa fa-times"></i>
 							</button>
+
 						</div>
 					</div>
 				</div>

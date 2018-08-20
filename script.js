@@ -146,24 +146,20 @@ function cardDragOver(event){
 function editCard(){
 	event.stopPropagation();
 	let card = event.currentTarget.closest(".card");
+	let cardNameElement = card.querySelector(".card__name");
 
 	card.setAttribute("draggable", "false");
 
-	let currValue = card.querySelector("p").textContent;
+	let currValue = cardNameElement.textContent;
 
-	card.querySelector("p").classList.add("hidden");
+	cardNameElement.classList.add("hidden");
 
 	let editText = document.createElement("input");
 	editText.value = currValue;
 
-	let cardButtons = card.querySelector(".card__bttns");
+	cardNameElement.parentNode.insertBefore(editText, cardNameElement.nextSibling);
 
-	cardButtons.parentNode.insertBefore(editText, cardButtons);
-
-	card.querySelector(".card__edit").classList.add("hidden");
-	card.querySelector(".card__delete").classList.add("hidden");
-	card.querySelector(".card__confirm").classList.remove("hidden");
-	card.querySelector(".card__cancel").classList.remove("hidden");
+	showEditButtons(card);
 }
 
 function confirmEdit(event){
@@ -179,7 +175,7 @@ function confirmEdit(event){
 
 	cardName.classList.remove("hidden");
 
-	showCardNormalButtons(card);
+	showNormalButtons(card);
 
 	card.setAttribute("draggable", "true");
 
@@ -197,16 +193,9 @@ function cancelEdit(event){
 	let cardName = card.querySelector("p");
 	cardName.classList.remove("hidden");
 
-	showCardNormalButtons(card);
+	showNormalButtons(card);
 
 	card.setAttribute("draggable", "true");
-}
-
-function showCardNormalButtons(card){
-	card.querySelector(".card__cancel").classList.add("hidden");
-	card.querySelector(".card__confirm").classList.add("hidden");
-	card.querySelector(".card__edit").classList.remove("hidden");
-	card.querySelector(".card__delete").classList.remove("hidden");
 }
 
 function saveContent(){
@@ -340,14 +329,9 @@ function editList(event){
 	textEdit.className = "list__input-name";
 	textEdit.value = currName;
 
-	list.querySelector(".list__header").insertBefore(textEdit, list.querySelector(".list__header").firstChild);
+	listNameNode.parentNode.insertBefore(textEdit, listNameNode.nextSibling);
 
-	list.querySelector(".list__delete").classList.add("hidden");
-	list.querySelector(".list__edit").classList.add("hidden");
-	list.querySelector(".list__sort").classList.add("hidden");
-
-	list.querySelector(".list__confirm").classList.remove("hidden");
-	list.querySelector(".list__cancel").classList.remove("hidden");
+	showEditButtons(list);
 }
 
 function cancelList(event){
@@ -359,7 +343,7 @@ function cancelList(event){
 	const input = list.querySelector(".list__input-name");
 	input.parentNode.removeChild(input);
 
-	showListNormalButtons(list);
+	showNormalButtons(list);
 }
 
 function confirmList(event){
@@ -372,18 +356,19 @@ function confirmList(event){
 	listNameNode.textContent = input.value;
 	listNameNode.classList.remove("hidden");
 
-	showListNormalButtons(list);
+	showNormalButtons(list);
 
 	saveContent();
 }
 
-function showListNormalButtons(list){
-	list.querySelector(".list__delete").classList.remove("hidden");
-	list.querySelector(".list__edit").classList.remove("hidden");
-	list.querySelector(".list__sort").classList.remove("hidden");
+function showNormalButtons(element){
+	element.querySelector(".bttns-normal").classList.remove("hidden");
+	element.querySelector(".bttns-edit").classList.add("hidden");
+}
 
-	list.querySelector(".list__confirm").classList.add("hidden");
-	list.querySelector(".list__cancel").classList.add("hidden");
+function showEditButtons(element){
+	element.querySelector(".bttns-normal").classList.add("hidden");
+	element.querySelector(".bttns-edit").classList.remove("hidden");
 }
 
 function sortList(event){
