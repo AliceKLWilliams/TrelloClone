@@ -15,7 +15,7 @@ let lastCard, shadowDiv;
 function addList(){
 	const numLists = document.querySelectorAll(".list").length;
 
-	const newList = createList(`List ${numLists+1}`, []);
+	const newList = createList(`List ${numLists+1}`, [], numLists+1);
 
 	newList.querySelector(".list__edit").click();
 }
@@ -56,7 +56,7 @@ function addCard(e) {
 
 	let cardName = list.querySelector(".new__text").value;
 
-	let radioButtons = Array.from(document.querySelectorAll(".r-category"));
+	let radioButtons = Array.from(list.querySelectorAll(".r-category"));
 
 	let value = radioButtons.length && radioButtons.find(r => r.checked).value;
 
@@ -222,7 +222,6 @@ function saveContent(){
 		let listObj = {}; 
 		let cardList = [];
 
-
 		cards.forEach(card => {
 			cardList.push({
 				name: card.querySelector(".card__name").textContent,
@@ -248,17 +247,35 @@ function loadData(){
 		let originalList = document.querySelector(".list");
 		originalList.parentNode.removeChild(originalList);
 
+		let i = 1;
 		listArr.forEach(listObj => {
-			createList(listObj.name, listObj.cards);
+			createList(listObj.name, listObj.cards, i);
+			
+			i++;
 		});
 	}
 
 }
 
-function createList(listName, cards){
+function renameCategories(list, number){
+	const radios = Array.from(list.querySelectorAll('input[name^=category]'));
+	radios.forEach(radio => {
+		radio.setAttribute("name", `category-${number}`);
+	});
+
+	radios.forEach(radio => {
+		radio.setAttribute("id", radio.getAttribute("id") + `-${number}`);
+	});
+
+	const labels = [...list.querySelectorAll(".category")];
+	labels.forEach(label => {
+		label.setAttribute("for", label.getAttribute("for") + `-${number}`);
+	});
+}
+
+function createList(listName, cards, number){
 	const newList = listCopy.cloneNode(true);
 	newList.querySelector(".card__add").addEventListener("click", addCard);
-
 
 	newList.addEventListener("dragover", dragList);
 	newList.addEventListener("drop", handleDropList);
@@ -266,6 +283,8 @@ function createList(listName, cards){
 	newList.querySelector(".list__content").addEventListener("drop", contentDrop);
 
 	newList.querySelector(".list__name").textContent = listName;
+
+	renameCategories(newList, number);
 
 	const listAdd = document.querySelector(".list__add");
 	board.insertBefore(newList, listAdd);
