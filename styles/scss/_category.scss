@@ -1,0 +1,45 @@
+
+.categories{
+	margin:1em 0em;
+}
+
+.category{
+	display:inline-block;
+
+	padding:5px;
+
+	background-color:#eee;
+	border-radius:5px;
+	margin-right:10px;
+
+	font-size:0.8rem;
+
+	&--low{
+		background-color: #FFECB3;
+	}
+
+	&--medium{
+		background-color: #FFCCBC;
+	}
+
+	&--high{
+		background-color: #ffcdd2;
+	}
+
+
+}
+
+input:checked + .category--low{
+	background-color: #FFB300;
+	color:white;
+}
+
+input:checked + .category--medium{
+	background-color: #F4511E;
+	color:white;
+}
+
+input:checked + .category--high{
+	background-color: #b71c1c;
+	color:white;
+}

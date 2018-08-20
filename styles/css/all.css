@@ -43,6 +43,17 @@ p {
     background-color: #bbb; }
   .card--hidden {
     display: none; }
+  .card__category {
+    align-self: stretch;
+    width: 7px;
+    background-color: #eee;
+    border-radius: 5px; }
+    .card__category--low {
+      background-color: #FFB300; }
+    .card__category--medium {
+      background-color: #F4511E; }
+    .card__category--high {
+      background-color: #b71c1c; }
 
 .board {
   display: inline-flex;
@@ -57,5 +68,34 @@ button {
   cursor: pointer; }
   button:hover {
     color: #777; }
+
+.categories {
+  margin: 1em 0em; }
+
+.category {
+  display: inline-block;
+  padding: 5px;
+  background-color: #eee;
+  border-radius: 5px;
+  margin-right: 10px;
+  font-size: 0.8rem; }
+  .category--low {
+    background-color: #FFECB3; }
+  .category--medium {
+    background-color: #FFCCBC; }
+  .category--high {
+    background-color: #ffcdd2; }
+
+input:checked + .category--low {
+  background-color: #FFB300;
+  color: white; }
+
+input:checked + .category--medium {
+  background-color: #F4511E;
+  color: white; }
+
+input:checked + .category--high {
+  background-color: #b71c1c;
+  color: white; }
 
 /*# sourceMappingURL=all.css.map */

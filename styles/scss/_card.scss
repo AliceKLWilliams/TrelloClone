@@ -15,4 +15,24 @@
 		display:none;
 	}
 
+	&__category{
+		align-self: stretch;
+		width:7px;
+
+		background-color:#eee;
+		border-radius: 5px;
+
+		&--low{
+			background-color: #FFB300;
+		}
+
+		&--medium{
+			background-color: #F4511E;
+		}
+
+		&--high{
+			background-color: #b71c1c;
+		}
+	}
+
 }

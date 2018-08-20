@@ -32,6 +32,9 @@
 			</div>
 			<div class="list__content">
 				<div class="card card--original" draggable="true">
+					<div class="card__category">
+						
+					</div>
 					<p class="card__name">Card 1</p>
 					<div class="card__bttns">
 						<button class="card__edit" onclick="editCard(event)">
@@ -53,6 +56,21 @@
 			<div class="list__footer">
 				<input type="text" class="new__text" placeholder="What do you need to do?">
 				<button class="card__add" onclick="addCard(event)" >+ Add a Card</button>
+
+				<div class="categories">
+					<input type="radio" name="category" id="low" value="low" class="r-category hidden" checked>
+					<label class="category category--low" for="low">
+						Low
+					</label>
+					<input type="radio" name="category" id="medium" value="medium" class="r-category hidden">
+					<label class="category category--medium" for="medium">
+						Medium
+					</label>
+					<input type="radio" name="category" id="high" value="high" class="r-category hidden">
+					<label class="category category--high" for="high">
+						High
+					</label>
+				</div>
 			</div>
 		</div>
 

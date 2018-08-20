@@ -48,9 +48,7 @@ board.addEventListener("dragover", () => {
 });
 
 function addCard(e) {
-	const bttn = e.target;
-
-	const list = bttn.closest(".list");
+	const list = e.target.closest(".list");
 
 	if(list.querySelector(".new__text").value.length == 0){
 		return;
@@ -58,7 +56,11 @@ function addCard(e) {
 
 	let cardName = list.querySelector(".new__text").value;
 
-	createCard(cardName, list);
+	let radioButtons = Array.from(document.querySelectorAll(".r-category"));
+
+	let value = radioButtons.length && radioButtons.find(r => r.checked).value;
+
+	createCard(cardName, value, list);
 
 	list.querySelector(".new__text").value = "";
 }
@@ -263,7 +265,7 @@ function createList(listName, cards){
 	board.insertBefore(newList, listAdd);
 
 	cards.forEach(card => {
-		createCard(card, newList);
+		createCard(card, "low", newList);
 	});
 
 	saveContent();
@@ -272,9 +274,11 @@ function createList(listName, cards){
 
 }
 
-function createCard(cardName, parentList){
+function createCard(cardName, category, parentList){
 	const newCard = cardCopy.cloneNode(true);
+
 	newCard.querySelector(".card__name").textContent = cardName;
+	newCard.querySelector(".card__category").classList.add(`card__category--${category}`);
 
 	newCard.addEventListener("dragover", cardDragOver);
 
