@@ -1,23 +1,24 @@
 const board = document.querySelector(".board");
+
+const originalCard = document.querySelector(".card--original");
+
+const cardCopy = originalCard.cloneNode(true);
+cardCopy.classList.remove(".card--original");
+originalCard.parentNode.removeChild(originalCard);
+
 const listCopy = document.querySelector(".list").cloneNode(true);
-
-document.querySelector(".card__add").addEventListener("click", addCard);
-
 
 window.onload = loadData;
 
-const listAdd = document.querySelector(".list__add");
-
 let lastCard, shadowDiv;
 
-
-listAdd.addEventListener("click", () => {
+function addList(){
 	const numLists = document.querySelectorAll(".list").length;
 
 	const newList = createList(`List ${numLists+1}`, []);
 
 	newList.querySelector(".list__edit").click();
-});
+}
 
 
 board.addEventListener("dragstart", (event) => {
@@ -250,12 +251,15 @@ function createList(listName, cards){
 	const newList = listCopy.cloneNode(true);
 	newList.querySelector(".card__add").addEventListener("click", addCard);
 
+
 	newList.addEventListener("dragover", dragList);
 	newList.addEventListener("drop", handleDropList);
+
 	newList.querySelector(".list__content").addEventListener("drop", contentDrop);
 
 	newList.querySelector(".list__name").textContent = listName;
 
+	const listAdd = document.querySelector(".list__add");
 	board.insertBefore(newList, listAdd);
 
 	cards.forEach(card => {
@@ -269,66 +273,14 @@ function createList(listName, cards){
 }
 
 function createCard(cardName, parentList){
-	const newCard = document.createElement("div");
-	newCard.className = "card";
-	newCard.setAttribute("draggable", "true");
-
-	const cardTitle = document.createElement("p");
-	cardTitle.textContent = cardName;
-
-	const editBttn = document.createElement("button");
-	editBttn.classList.add("card__edit");
-	const editIcon = document.createElement("i");
-	editIcon.classList.add("fa", "fa-pen");
-
-	editBttn.appendChild(editIcon);
-	editBttn.addEventListener("click", editCard);
-
-	const deleteBttn = document.createElement("button");
-	deleteBttn.classList.add("card__delete");
-	const deleteIcon = document.createElement("i");
-	deleteIcon.classList.add("fa", "fa-trash-alt");
-
-	deleteBttn.appendChild(deleteIcon);
-	deleteBttn.addEventListener("click", deleteCard);
-
-	const confirmBttn = document.createElement("button");
-	confirmBttn.classList.add("card__confirm", "hidden");
-	const confirmIcon = document.createElement("i");
-	confirmIcon.classList.add("fa", "fa-check");
-
-	confirmBttn.appendChild(confirmIcon);
-	confirmBttn.addEventListener("click", confirmEdit);
-
-	const cancelBttn = document.createElement("button");
-	cancelBttn.classList.add("card__cancel", "hidden");
-	const cancelIcon = document.createElement("i");
-	cancelIcon.classList.add("fa", "fa-times");
-
-	cancelBttn.appendChild(cancelIcon);
-	cancelBttn.addEventListener("click", cancelEdit);
-
-	const cardBtts = document.createElement("div");
-	cardBtts.classList.add("card__bttns");
-
-	newCard.appendChild(cardTitle);
-	cardBtts.appendChild(editBttn);
-	cardBtts.appendChild(deleteBttn);
-	cardBtts.appendChild(confirmBttn);
-	cardBtts.appendChild(cancelBttn);
-
-	newCard.appendChild(cardBtts);
+	const newCard = cardCopy.cloneNode(true);
+	newCard.querySelector(".card__name").textContent = cardName;
 
 	newCard.addEventListener("dragover", cardDragOver);
-	newCard.addEventListener("drop", cardDrop);
 
 	parentList.querySelector(".list__content").appendChild(newCard);
 
 	saveContent();
-}
-
-function cardDrop(){
-	console.log("drop");
 }
 
 function deleteCard(event){

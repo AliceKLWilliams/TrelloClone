@@ -30,15 +30,33 @@
 					</button>
 				</div>
 			</div>
-			<div class="list__content"></div>
+			<div class="list__content">
+				<div class="card card--original" draggable="true">
+					<p class="card__name">Card 1</p>
+					<div class="card__bttns">
+						<button class="card__edit" onclick="editCard(event)">
+							<i class="fa fa-pen"></i>
+						</button>
+						<button class="card__delete" onclick="deleteCard(event)">
+							<i class="fa fa-trash-alt"></i>
+						</button>
+						<button class="card__confirm hidden" onclick="confirmEdit(event)">
+							<i class="fa fa-check"></i>
+						</button>
+						<button class="card__cancel hidden" onclick="cancelEdit(event)">
+							<i class="fa fa-times"></i>
+						</button>
+					</div>
+				</div>
+			</div>
 
 			<div class="list__footer">
 				<input type="text" class="new__text" placeholder="What do you need to do?">
-				<button class="card__add" >+ Add a Card</button>
+				<button class="card__add" onclick="addCard(event)" >+ Add a Card</button>
 			</div>
 		</div>
 
-		<button class="list__add">Add New List</button>
+		<button class="list__add" onclick="addList()">Add New List</button>
 	</div>
 
 	<script src="script.js"></script>
