@@ -345,3 +345,58 @@ function deleteList(event){
 
 	saveContent();
 }
+
+function editList(event){
+	const list = event.currentTarget.parentNode.parentNode.parentNode;
+	const listNameNode = list.querySelector(".list__name");
+	const currName = listNameNode.textContent;
+
+	listNameNode.style.display = "none";
+
+	const textEdit = document.createElement("input");
+	textEdit.className = "list__input-name";
+	textEdit.value = currName;
+
+	list.querySelector(".list__header").insertBefore(textEdit, list.querySelector(".list__header").firstChild);
+
+	list.querySelector(".list__delete").style.display = "none";
+	list.querySelector(".list__edit").style.display = "none";
+
+	list.querySelector(".list__confirm").style.display = "inline-block";
+	list.querySelector(".list__cancel").style.display = "inline-block";
+}
+
+function cancelList(event){
+	const list = event.currentTarget.parentNode.parentNode.parentNode;
+	const listNameNode = list.querySelector(".list__name");
+	
+	listNameNode.style.display = "block";
+
+	const input = list.querySelector(".list__input-name");
+	input.parentNode.removeChild(input);
+
+	list.querySelector(".list__delete").style.display = "inline-block";
+	list.querySelector(".list__edit").style.display = "inline-block";
+
+	list.querySelector(".list__confirm").style.display = "none";
+	list.querySelector(".list__cancel").style.display = "none";
+}
+
+function confirmList(event){
+	const list = event.currentTarget.parentNode.parentNode.parentNode;
+	const listNameNode = list.querySelector(".list__name");
+
+	const input = list.querySelector(".list__input-name");
+	input.parentNode.removeChild(input);
+
+	listNameNode.textContent = input.value;
+	listNameNode.style.display = "block";
+	
+	list.querySelector(".list__delete").style.display = "inline-block";
+	list.querySelector(".list__edit").style.display = "inline-block";
+
+	list.querySelector(".list__confirm").style.display = "none";
+	list.querySelector(".list__cancel").style.display = "none";
+
+	saveContent();
+}

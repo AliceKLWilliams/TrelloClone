@@ -25,4 +25,9 @@
 		display:flex;
 		justify-content: space-between;
 	}
+
+	&__confirm, &__cancel{
+		display:none;
+	}
+
 }
