@@ -14,7 +14,9 @@ let lastCard, shadowDiv;
 listAdd.addEventListener("click", () => {
 	const numLists = document.querySelectorAll(".list").length;
 
-	createList(`List ${numLists+1}`, []);
+	const newList = createList(`List ${numLists+1}`, []);
+
+	newList.querySelector(".list__edit").click();
 });
 
 
@@ -28,7 +30,7 @@ board.addEventListener("dragstart", (event) => {
 		event.dataTransfer.effectAllowed = "move";
 
 		setTimeout(()=>{
-			event.target.style.display = "none";
+			event.target.classList.add("card--hidden");
 		},1);
 
 		shadowDiv = document.createElement("div");
@@ -90,7 +92,7 @@ function contentDrop(event) {
 		}
 	}
 
-	element.style.display = "flex";
+	element.classList.remove("card--hidden");
 	shadowDiv.parentNode.removeChild(shadowDiv);
 	
 	saveContent();
@@ -111,7 +113,7 @@ function handleDropList(event){
 	event.currentTarget.querySelector(".list__content").appendChild(element);
 
 	shadowDiv.parentNode.removeChild(shadowDiv);
-	element.style.display = "flex";
+	element.classList.remove("card--hidden");
 }
 
 
@@ -146,18 +148,17 @@ function editCard(){
 
 	let currValue = card.querySelector("p").textContent;
 
-	card.querySelector("p").style.display = "none";
+	card.querySelector("p").classList.add("hidden");
 
 	let editText = document.createElement("input");
 	editText.value = currValue;
 
 	card.insertBefore(editText, card.querySelector(".card__bttns"));
 
-	event.currentTarget.style.display = "none";
-
-	card.querySelector(".card__delete").style.display = "none";
-	card.querySelector(".card__confirm").style.display = "inline-block";
-	card.querySelector(".card__cancel").style.display = "inline-block";
+	card.querySelector(".card__edit").classList.add("hidden");
+	card.querySelector(".card__delete").classList.add("hidden");
+	card.querySelector(".card__confirm").classList.remove("hidden");
+	card.querySelector(".card__cancel").classList.remove("hidden");
 }
 
 function confirmEdit(event){
@@ -171,12 +172,9 @@ function confirmEdit(event){
 	let cardName = card.querySelector("p");
 	cardName.textContent = newVal;
 
-	cardName.style.display = "inline-block";
+	cardName.classList.remove("hidden");
 
-	event.currentTarget.style.display = "none";
-	card.querySelector(".card__cancel").style.display = "none";
-	card.querySelector(".card__edit").style.display = "inline-block";
-	card.querySelector(".card__delete").style.display = "inline-block";
+	showCardNormalButtons(card);
 
 	card.setAttribute("draggable", "true");
 
@@ -192,14 +190,18 @@ function cancelEdit(event){
 	card.removeChild(editText);
 
 	let cardName = card.querySelector("p");
-	cardName.style.display = "inline-block";
+	cardName.classList.remove("hidden");
 
-	event.currentTarget.style.display = "none";
-	card.querySelector(".card__confirm").style.display = "none";
-	card.querySelector(".card__edit").style.display = "inline-block";
-	card.querySelector(".card__delete").style.display = "inline-block";
+	showCardNormalButtons(card);
 
 	card.setAttribute("draggable", "true");
+}
+
+function showCardNormalButtons(card){
+	card.querySelector(".card__cancel").classList.add("hidden");
+	card.querySelector(".card__confirm").classList.add("hidden");
+	card.querySelector(".card__edit").classList.remove("hidden");
+	card.querySelector(".card__delete").classList.remove("hidden");
 }
 
 function saveContent(){
@@ -262,6 +264,8 @@ function createList(listName, cards){
 
 	saveContent();
 
+	return newList;
+
 }
 
 function createCard(cardName, parentList){
@@ -289,24 +293,20 @@ function createCard(cardName, parentList){
 	deleteBttn.addEventListener("click", deleteCard);
 
 	const confirmBttn = document.createElement("button");
-	confirmBttn.classList.add("card__confirm");
+	confirmBttn.classList.add("card__confirm", "hidden");
 	const confirmIcon = document.createElement("i");
 	confirmIcon.classList.add("fa", "fa-check");
 
 	confirmBttn.appendChild(confirmIcon);
 	confirmBttn.addEventListener("click", confirmEdit);
 
-	confirmBttn.style.display = "none";
-
 	const cancelBttn = document.createElement("button");
-	cancelBttn.classList.add("card__cancel");
+	cancelBttn.classList.add("card__cancel", "hidden");
 	const cancelIcon = document.createElement("i");
 	cancelIcon.classList.add("fa", "fa-times");
 
 	cancelBttn.appendChild(cancelIcon);
 	cancelBttn.addEventListener("click", cancelEdit);
-
-	cancelBttn.style.display = "none";
 
 	const cardBtts = document.createElement("div");
 	cardBtts.classList.add("card__bttns");
@@ -339,7 +339,7 @@ function deleteCard(event){
 }
 
 function deleteList(event){
-	const list = event.currentTarget.parentNode.parentNode;
+	const list = event.currentTarget.parentNode.parentNode.parentNode;
 
 	list.parentNode.removeChild(list);
 
@@ -351,7 +351,7 @@ function editList(event){
 	const listNameNode = list.querySelector(".list__name");
 	const currName = listNameNode.textContent;
 
-	listNameNode.style.display = "none";
+	listNameNode.classList.add("hidden");
 
 	const textEdit = document.createElement("input");
 	textEdit.className = "list__input-name";
@@ -359,27 +359,23 @@ function editList(event){
 
 	list.querySelector(".list__header").insertBefore(textEdit, list.querySelector(".list__header").firstChild);
 
-	list.querySelector(".list__delete").style.display = "none";
-	list.querySelector(".list__edit").style.display = "none";
+	list.querySelector(".list__delete").classList.add("hidden");
+	list.querySelector(".list__edit").classList.add("hidden");
 
-	list.querySelector(".list__confirm").style.display = "inline-block";
-	list.querySelector(".list__cancel").style.display = "inline-block";
+	list.querySelector(".list__confirm").classList.remove("hidden");
+	list.querySelector(".list__cancel").classList.remove("hidden");
 }
 
 function cancelList(event){
 	const list = event.currentTarget.parentNode.parentNode.parentNode;
 	const listNameNode = list.querySelector(".list__name");
 	
-	listNameNode.style.display = "block";
+	listNameNode.classList.remove("hidden");
 
 	const input = list.querySelector(".list__input-name");
 	input.parentNode.removeChild(input);
 
-	list.querySelector(".list__delete").style.display = "inline-block";
-	list.querySelector(".list__edit").style.display = "inline-block";
-
-	list.querySelector(".list__confirm").style.display = "none";
-	list.querySelector(".list__cancel").style.display = "none";
+	showListNormalButtons(list);
 }
 
 function confirmList(event){
@@ -390,13 +386,17 @@ function confirmList(event){
 	input.parentNode.removeChild(input);
 
 	listNameNode.textContent = input.value;
-	listNameNode.style.display = "block";
-	
-	list.querySelector(".list__delete").style.display = "inline-block";
-	list.querySelector(".list__edit").style.display = "inline-block";
+	listNameNode.classList.remove("hidden");
 
-	list.querySelector(".list__confirm").style.display = "none";
-	list.querySelector(".list__cancel").style.display = "none";
+	showListNormalButtons(list);
 
 	saveContent();
+}
+
+function showListNormalButtons(list){
+	list.querySelector(".list__delete").classList.remove("hidden");
+	list.querySelector(".list__edit").classList.remove("hidden");
+
+	list.querySelector(".list__confirm").classList.add("hidden");
+	list.querySelector(".list__cancel").classList.add("hidden");
 }

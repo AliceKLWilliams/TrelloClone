@@ -12,6 +12,9 @@ body {
 p {
   font-size: 1rem; }
 
+.hidden {
+  display: none; }
+
 .list {
   display: inline-block;
   border-radius: 1em;
@@ -28,8 +31,6 @@ p {
     margin-bottom: 1em;
     display: flex;
     justify-content: space-between; }
-  .list__confirm, .list__cancel {
-    display: none; }
 
 .card {
   padding: 1em 0em;
@@ -40,6 +41,8 @@ p {
   align-items: center; }
   .card--shadow {
     background-color: #bbb; }
+  .card--hidden {
+    display: none; }
 
 .board {
   display: inline-flex;
