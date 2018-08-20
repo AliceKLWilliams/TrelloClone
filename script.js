@@ -50,7 +50,7 @@ board.addEventListener("dragover", () => {
 function addCard(e) {
 	const bttn = e.target;
 
-	const list = bttn.parentElement.parentElement;
+	const list = bttn.closest(".list");
 
 	if(list.querySelector(".new__text").value.length == 0){
 		return;
@@ -143,7 +143,7 @@ function cardDragOver(event){
 
 function editCard(){
 	event.stopPropagation();
-	let card = event.currentTarget.parentElement.parentElement;
+	let card = event.currentTarget.closest(".card");
 
 	card.setAttribute("draggable", "false");
 
@@ -163,7 +163,7 @@ function editCard(){
 }
 
 function confirmEdit(event){
-	let card = event.currentTarget.parentElement.parentElement;
+	let card = event.currentTarget.closest(".card");
 	let editText = card.querySelector("input");
 
 	let newVal = editText.value;
@@ -184,7 +184,7 @@ function confirmEdit(event){
 }
 
 function cancelEdit(event){
-	let card = event.currentTarget.parentElement.parentElement;
+	let card = event.currentTarget.closest(".card");
 
 	let editText = card.querySelector("input");
 
@@ -284,14 +284,14 @@ function createCard(cardName, parentList){
 }
 
 function deleteCard(event){
-	let card = event.currentTarget.parentNode.parentNode;
+	let card = event.currentTarget.closest(".card");
 	card.parentNode.removeChild(card);
 
 	saveContent();
 }
 
 function deleteList(event){
-	const list = event.currentTarget.parentNode.parentNode.parentNode;
+	const list = event.currentTarget.closest(".list");
 
 	list.parentNode.removeChild(list);
 
@@ -299,7 +299,7 @@ function deleteList(event){
 }
 
 function editList(event){
-	const list = event.currentTarget.parentNode.parentNode.parentNode;
+	const list = event.currentTarget.closest(".list");
 	const listNameNode = list.querySelector(".list__name");
 	const currName = listNameNode.textContent;
 
@@ -319,7 +319,7 @@ function editList(event){
 }
 
 function cancelList(event){
-	const list = event.currentTarget.parentNode.parentNode.parentNode;
+	const list = event.currentTarget.closest(".list");
 	const listNameNode = list.querySelector(".list__name");
 	
 	listNameNode.classList.remove("hidden");
@@ -331,7 +331,7 @@ function cancelList(event){
 }
 
 function confirmList(event){
-	const list = event.currentTarget.parentNode.parentNode.parentNode;
+	const list = event.currentTarget.closest(".list");
 	const listNameNode = list.querySelector(".list__name");
 
 	const input = list.querySelector(".list__input-name");
