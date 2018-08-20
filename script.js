@@ -2,13 +2,13 @@ const board = document.querySelector(".board");
 const listCopy = document.querySelector(".list").cloneNode(true);
 
 document.querySelector(".card__add").addEventListener("click", addCard);
-document.querySelector(".list").addEventListener("drop", handleDrop);
 
-let srcCard = null;
 
 window.onload = loadData;
 
 const listAdd = document.querySelector(".list__add");
+
+let lastCard, shadowDiv;
 
 
 listAdd.addEventListener("click", () => {
@@ -21,13 +21,21 @@ listAdd.addEventListener("click", () => {
 board.addEventListener("dragstart", (event) => {
 	if (event.target.classList.contains("card")) {
 
-		srcCard = event.target;
-
 		let dragTime = (new Date()).getTime();
 		event.target.dataset.time = dragTime;
 
 		event.dataTransfer.setData("text", dragTime);
 		event.dataTransfer.effectAllowed = "move";
+
+		setTimeout(()=>{
+			event.target.style.display = "none";
+		},1);
+
+		shadowDiv = document.createElement("div");
+		shadowDiv.style.height = `${event.target.clientHeight}px`;
+		shadowDiv.style.width = `${event.target.clientWidth}px`;
+
+		shadowDiv.classList.add("card--shadow");
 	}
 });
 
@@ -52,35 +60,83 @@ function addCard(e) {
 	list.querySelector(".new__text").value = "";
 }
 
-function handleDrop(event) {
+function contentDrop(event) {
+
 	event.preventDefault();
+
+	event.stopPropagation();
 
 	let data = event.dataTransfer.getData("text");
 	let element = document.querySelector(`div[data-time='${data}']`);
 
-	let list = event.currentTarget;
+	if(event.currentTarget.querySelectorAll(".card").length == 0){
+		event.currentTarget.appendChild(element);
+	} else {
 
-	if(event.target.classList.contains("card")){
-		list.querySelector(".list__content").insertBefore(element, event.target);
-		event.target.style.borderTop = "none";
+		let card = lastCard;
+
+		let y = card.offsetTop;
+		let offset = event.pageY - y;
+
+		let height = card.clientHeight;
+		let boundary = height/2;
+
+		if(offset <= boundary){
+			// Insert the card before
+			card.parentNode.insertBefore(element, card);
+		} else{
+			// Insert the card after
+			card.parentNode.insertBefore(element, card.nextSibling);
+		}
 	}
 
+	element.style.display = "flex";
+	shadowDiv.parentNode.removeChild(shadowDiv);
+	
 	saveContent();
+
 }
 
-function dragEnter(event){
-	event.preventDefault();
-
-	if(event.target.classList.contains("card")){
-		let height = srcCard.getBoundingClientRect().height;
-
-		event.target.style.borderTop = `${height}px solid white`;
+function dragList(event){
+	if(!(event.target.classList.contains("card--shadow"))){
+		event.currentTarget.querySelector(".list__content").appendChild(shadowDiv);
 	}
 }
 
-function dragLeave(event){
-	event.target.style.borderTop = "none";
+function handleDropList(event){
+
+	let data = event.dataTransfer.getData("text");
+	let element = document.querySelector(`div[data-time='${data}']`);
+
+	event.currentTarget.querySelector(".list__content").appendChild(element);
+
+	shadowDiv.parentNode.removeChild(shadowDiv);
+	element.style.display = "flex";
 }
+
+
+function cardDragOver(event){
+	event.stopPropagation();
+
+	lastCard = event.currentTarget;
+	
+	let card = lastCard;
+
+	let y = card.offsetTop;
+	let offset = event.pageY - y;
+
+	let height = card.clientHeight;
+	let boundary = height/2;
+
+	if(offset <= boundary){
+		// Insert the card before
+		card.parentNode.insertBefore(shadowDiv, card);
+	} else{
+		// Insert the card after
+		card.parentNode.insertBefore(shadowDiv, card.nextSibling);
+	}
+}
+
 
 function editCard(){
 	event.stopPropagation();
@@ -191,7 +247,10 @@ function loadData(){
 function createList(listName, cards){
 	const newList = listCopy.cloneNode(true);
 	newList.querySelector(".card__add").addEventListener("click", addCard);
-	newList.addEventListener("drop", handleDrop);
+
+	newList.addEventListener("dragover", dragList);
+	newList.addEventListener("drop", handleDropList);
+	newList.querySelector(".list__content").addEventListener("drop", contentDrop);
 
 	newList.querySelector(".list__name").textContent = listName;
 
@@ -260,12 +319,16 @@ function createCard(cardName, parentList){
 
 	newCard.appendChild(cardBtts);
 
-	newCard.addEventListener("dragenter", dragEnter);
-	newCard.addEventListener("dragleave", dragLeave);
+	newCard.addEventListener("dragover", cardDragOver);
+	newCard.addEventListener("drop", cardDrop);
 
 	parentList.querySelector(".list__content").appendChild(newCard);
 
 	saveContent();
+}
+
+function cardDrop(){
+	console.log("drop");
 }
 
 function deleteCard(event){

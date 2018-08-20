@@ -36,6 +36,8 @@ p {
   flex-direction: row;
   justify-content: space-between;
   align-items: center; }
+  .card--shadow {
+    background-color: #bbb; }
 
 .board {
   display: inline-flex;
