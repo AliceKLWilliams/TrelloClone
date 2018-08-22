@@ -2,7 +2,27 @@
 	padding:1em 0em;
 	margin:1em 0em;
 
-	display:flex;
+	position: relative;
+
+	display: flex;
+
+	&__info{
+		display: flex;
+	}
+
+	&__info:hover > &__categories{
+		display: block;
+	}
+
+	&__categories{
+		position: absolute;
+		left:15px;
+
+		top:50%;
+		transform: translateY(-50%);
+
+		display: none;
+	}
 
 	&__content{
 		display:flex;
@@ -24,6 +44,8 @@
 	&__category{
 		align-self: stretch;
 		width:7px;
+
+		height:40px;
 
 		background-color:#eee;
 		border-radius: 5px;

@@ -21,7 +21,7 @@ p {
   padding: 2em;
   margin: 0em 2em;
   background: white;
-  width: 30em;
+  width: 35em;
   flex-shrink: 0; }
   .list__add {
     flex-shrink: 0; }
@@ -35,7 +35,18 @@ p {
 .card {
   padding: 1em 0em;
   margin: 1em 0em;
+  position: relative;
   display: flex; }
+  .card__info {
+    display: flex; }
+  .card__info:hover > .card__categories {
+    display: block; }
+  .card__categories {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none; }
   .card__content {
     display: flex;
     flex-direction: row;
@@ -49,6 +60,7 @@ p {
   .card__category {
     align-self: stretch;
     width: 7px;
+    height: 40px;
     background-color: #eee;
     border-radius: 5px;
     margin-right: 10px; }

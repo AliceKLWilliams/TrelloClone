@@ -38,8 +38,26 @@
 			</div>
 			<div class="list__content">
 				<div class="card card--original" draggable="true">
-					<div class="card__category">
+					<div class="card__info">
 
+						<div class="card__category">
+
+						</div>
+
+						<div class="card__categories">
+							<input type="radio" name="card__category" id="card__low" value="low" class="r-category hidden" onchange="selectCardRadio(event)" checked>
+							<label class="category category--low" for="card__low">
+								Low
+							</label>
+							<input type="radio" name="card__category" id="card__medium" value="medium" class="r-category hidden" onchange="selectCardRadio(event)">
+							<label class="category category--medium" for="card__medium">
+								Medium
+							</label>
+							<input type="radio" name="card__category" id="card__high" value="high" class="r-category hidden" onchange="selectCardRadio(event)">
+							<label class="category category--high" for="card__high">
+								High
+							</label>
+						</div>
 					</div>
 					<div class="card__content">
 
@@ -71,15 +89,15 @@
 				<button class="card__add" onclick="addCard(event)" >+ Add a Card</button>
 
 				<div class="categories">
-					<input type="radio" name="category-1" id="low" value="low" class="r-category hidden" checked>
+					<input type="radio" name="list__category" id="low" value="low" class="r-category hidden" checked>
 					<label class="category category--low" for="low">
 						Low
 					</label>
-					<input type="radio" name="category-1" id="medium" value="medium" class="r-category hidden">
+					<input type="radio" name="list__category" id="medium" value="medium" class="r-category hidden">
 					<label class="category category--medium" for="medium">
 						Medium
 					</label>
-					<input type="radio" name="category-1" id="high" value="high" class="r-category hidden">
+					<input type="radio" name="list__category" id="high" value="high" class="r-category hidden">
 					<label class="category category--high" for="high">
 						High
 					</label>

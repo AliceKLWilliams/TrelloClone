@@ -13,9 +13,10 @@ window.onload = loadData;
 let lastCard, shadowDiv;
 
 function addList(){
+	let number = (new Date()).getTime();
 	const numLists = document.querySelectorAll(".list").length;
 
-	const newList = createList(`List ${numLists+1}`, [], numLists+1);
+	const newList = createList(`List ${numLists+1}`, [], number);
 
 	newList.querySelector(".list__edit").click();
 }
@@ -248,9 +249,9 @@ function loadData(){
 }
 
 function renameCategories(list, number){
-	const radios = Array.from(list.querySelectorAll('input[name^=category]'));
+	const radios = Array.from(list.querySelectorAll('input[name*=category]'));
 	radios.forEach(radio => {
-		radio.setAttribute("name", `category-${number}`);
+		radio.setAttribute("name", radio.getAttribute("name") + `-${number}`);
 	});
 
 	radios.forEach(radio => {
@@ -274,13 +275,15 @@ function createList(listName, cards, number){
 
 	newList.querySelector(".list__name").textContent = listName;
 
-	renameCategories(newList, number);
+	renameCategories(newList.querySelector(".list__footer"), number);
 
 	const listAdd = document.querySelector(".list__add");
 	board.insertBefore(newList, listAdd);
 
+	let i = 0;
 	cards.forEach(card => {
-		createCard(card.name, card.category, newList);
+		createCard(card.name, card.category, newList, `${number}-${i}`);
+		i++;
 	});
 
 	saveContent();
@@ -289,7 +292,7 @@ function createList(listName, cards, number){
 
 }
 
-function createCard(cardName, category, parentList){
+function createCard(cardName, category, parentList, number = (new Date()).getTime()){
 	const newCard = cardCopy.cloneNode(true);
 
 	newCard.querySelector(".card__name").textContent = cardName;
@@ -297,7 +300,16 @@ function createCard(cardName, category, parentList){
 
 	newCard.dataset.category = category;
 
+	let radios = newCard.querySelectorAll("input[name*=category]");
+	[...radios].forEach(radio => {
+		if(radio.value == category){
+			radio.checked = true;
+		}
+	});
+
 	newCard.addEventListener("dragover", cardDragOver);
+
+	renameCategories(newCard, number);
 
 	parentList.querySelector(".list__content").appendChild(newCard);
 
@@ -404,4 +416,20 @@ function compareCards(a, b){
 	}
 
 	return 0;
+}
+
+function selectCardRadio(event){
+	let radioButton = event.currentTarget;
+	let card = radioButton.closest(".card");
+
+	let prevCategory = card.dataset.category;
+
+	card.dataset.category = radioButton.value;
+
+	let cardCategory = card.querySelector(".card__category");
+
+	cardCategory.classList.remove(`card__category--${prevCategory}`);
+	cardCategory.classList.add(`card__category--${radioButton.value}`);
+
+	saveContent();
 }
