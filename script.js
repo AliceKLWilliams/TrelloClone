@@ -157,6 +157,7 @@ function editCard(){
 	cardNameElement.classList.add("hidden");
 
 	let editText = document.createElement("input");
+	editText.classList.add("card__input");
 	editText.value = currValue;
 
 	cardNameElement.parentNode.insertBefore(editText, cardNameElement.nextSibling);
@@ -166,7 +167,7 @@ function editCard(){
 
 function confirmEdit(event){
 	let card = event.currentTarget.closest(".card");
-	let editText = card.querySelector("input");
+	let editText = card.querySelector(".card__input");
 
 	let newVal = editText.value;
 
@@ -188,7 +189,7 @@ function confirmEdit(event){
 function cancelEdit(event){
 	let card = event.currentTarget.closest(".card");
 
-	let editText = card.querySelector("input");
+	let editText = card.querySelector(".card__input");
 
 	editText.parentNode.removeChild(editText);
 
@@ -398,6 +399,8 @@ function sortList(event){
 	cards.forEach(card => {
 		listContent.appendChild(card);
 	});
+
+	saveContent();
 }
 
 function compareCards(a, b){
