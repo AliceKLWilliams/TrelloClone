@@ -102,7 +102,7 @@ function contentDrop(event) {
 	} else {
 		let card = lastCard;
 
-		let y = card.offsetTop;
+		let y = card.getBoundingClientRect().top;
 		let offset = event.pageY - y;
 
 		let height = card.clientHeight;
@@ -157,17 +157,19 @@ function dragOverCard(event){
 		return;
 	}
 
+	event.preventDefault();
 	event.stopPropagation();
 
 	lastCard = event.currentTarget;
 	
 	let card = lastCard;
 
-	let y = card.offsetTop;
+	let y = card.getBoundingClientRect().top;
 	let offset = event.pageY - y;
 
 	let height = card.clientHeight;
 	let boundary = height/2;
+
 
 	if(offset <= boundary){
 		// Insert the card before
