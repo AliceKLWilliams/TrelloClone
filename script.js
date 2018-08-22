@@ -61,7 +61,7 @@ function addCard(e) {
 
 	let cardName = list.querySelector(".card__input").value;
 
-	let radioButtons = Array.from(list.querySelectorAll(".r-category"));
+	let radioButtons = Array.from(list.querySelector(".list__categories").querySelectorAll(".r-category"));
 
 	let value = radioButtons.length && radioButtons.find(r => r.checked).value;
 
