@@ -6,7 +6,7 @@ const cardCopy = originalCard.cloneNode(true);
 cardCopy.classList.remove("card--original");
 originalCard.parentNode.removeChild(originalCard);
 
-const listCopy = document.querySelector(".list").cloneNode(true);
+const listCopy = document.querySelector(".list__container").cloneNode(true);
 
 window.onload = loadData;
 
@@ -256,7 +256,7 @@ function loadData(){
 	let listArr = JSON.parse(localStorage.getItem("board"));
 	
 	if(listArr){
-		let originalList = document.querySelector(".list");
+		let originalList = document.querySelector(".list__container");
 		originalList.parentNode.removeChild(originalList);
 
 		let i = 1;
@@ -345,7 +345,7 @@ function deleteCard(event){
 }
 
 function deleteList(event){
-	const list = event.currentTarget.closest(".list");
+	const list = event.currentTarget.closest(".list__container");
 
 	list.parentNode.removeChild(list);
 
@@ -455,4 +455,22 @@ function selectPriority(event){
 	cardCategory.classList.add(`card__category--${radioButton.value}`);
 
 	saveData();
+}
+
+function moveListLeft(event){
+	let list = event.target.closest(".list__container");
+	let prevList = list.previousSibling;
+
+	if(prevList && prevList.classList && prevList.classList.contains("list__container")){
+		list.parentNode.insertBefore(list, prevList);
+	}
+}
+
+function moveListRight(event){
+	let list = event.target.closest(".list__container");
+	let nextList = list.nextSibling;
+
+	if(nextList.classList.contains("list__container")){
+		nextList.parentNode.insertBefore(nextList, list);
+	}
 }

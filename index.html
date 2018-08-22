@@ -12,97 +12,108 @@
 </head>
 <body>
 	<div class="board">
-		<div class="list">
-			<div class="list__header">
-				<h1 class="list__name">List 1</h1>
-				<div class="bttns bttns--normal">
-					<button class="list__edit" onclick="editList(event)">
-						<i class="fa fa-pen"></i>
-					</button>
-					<button class="list__delete" onclick="deleteList(event)">
-						<i class="fa fa-trash-alt"></i>
-					</button>
+		<div class="list__container">
+			<div class="list">
+				<div class="list__header">
+					<h1 class="list__name">List 1</h1>
+					<div class="bttns bttns--normal">
+						<button class="list__edit" onclick="editList(event)">
+							<i class="fa fa-pen"></i>
+						</button>
+						<button class="list__delete" onclick="deleteList(event)">
+							<i class="fa fa-trash-alt"></i>
+						</button>
 
-					<button class="list__sort" onclick="sortList(event)">
-						<i class="fa fa-sort"></i>
-					</button>
-				</div>
-
-				<div class="bttns bttns--edit hidden">
-					<button class="list__confirm" onclick="confirmList(event)">
-						<i class="fa fa-check"></i>
-					</button>
-					<button class="list__cancel" onclick="cancelList(event)">
-						<i class="fa fa-times"></i>
-					</button>
-				</div>
-			</div>
-			<div class="list__content">
-				<div class="card card--original" draggable="true">
-					<div class="card__info">
-
-						<div class="card__category">
-
-						</div>
-
-						<div class="card__categories">
-							<input type="radio" name="card__category" id="card__low" value="low" class="r-category hidden" onchange="selectCardRadio(event)" checked>
-							<label class="category category--low" for="card__low">
-								Low
-							</label>
-							<input type="radio" name="card__category" id="card__medium" value="medium" class="r-category hidden" onchange="selectCardRadio(event)">
-							<label class="category category--medium" for="card__medium">
-								Medium
-							</label>
-							<input type="radio" name="card__category" id="card__high" value="high" class="r-category hidden" onchange="selectCardRadio(event)">
-							<label class="category category--high" for="card__high">
-								High
-							</label>
-						</div>
+						<button class="list__sort" onclick="sortList(event)">
+							<i class="fa fa-sort"></i>
+						</button>
 					</div>
-					<div class="card__content">
 
-						<p class="card__name">Card 1</p>
-						<div class="bttns bttns--normal">
-							<button class="card__edit" onclick="editCard(event)">
-								<i class="fa fa-pen"></i>
-							</button>
-							<button class="card__delete" onclick="deleteCard(event)">
-								<i class="fa fa-trash-alt"></i>
-							</button>
-						</div>
-
-						<div class="bttns bttns--edit hidden">
-							<button class="card__confirm" onclick="confirmEdit(event)">
-								<i class="fa fa-check"></i>
-							</button>
-							<button class="card__cancel" onclick="cancelEdit(event)">
-								<i class="fa fa-times"></i>
-							</button>
-
-						</div>
+					<div class="bttns bttns--edit hidden">
+						<button class="list__confirm" onclick="confirmListEdit(event)">
+							<i class="fa fa-check"></i>
+						</button>
+						<button class="list__cancel" onclick="cancelListEdit(event)">
+							<i class="fa fa-times"></i>
+						</button>
 					</div>
 				</div>
-			</div>
+				<div class="list__content">
+					<div class="card card--original" draggable="true">
+						<div class="card__info">
 
-			<div class="list__footer">
-				<input type="text" class="card__input" placeholder="What do you need to do?">
-				<button class="card__add" onclick="addCard(event)" >+ Add a Card</button>
+							<div class="card__category">
 
-				<div class="list__categories">
-					<input type="radio" name="list__category" id="low" value="low" class="r-category hidden" checked>
-					<label class="category category--low" for="low">
-						Low
-					</label>
-					<input type="radio" name="list__category" id="medium" value="medium" class="r-category hidden">
-					<label class="category category--medium" for="medium">
-						Medium
-					</label>
-					<input type="radio" name="list__category" id="high" value="high" class="r-category hidden">
-					<label class="category category--high" for="high">
-						High
-					</label>
+							</div>
+
+							<div class="card__categories">
+								<input type="radio" name="card__category" id="card__low" value="low" class="r-category hidden" onchange="selectPriority(event)" checked>
+								<label class="category category--low" for="card__low">
+									Low
+								</label>
+								<input type="radio" name="card__category" id="card__medium" value="medium" class="r-category hidden" onchange="selectPriority(event)">
+								<label class="category category--medium" for="card__medium">
+									Medium
+								</label>
+								<input type="radio" name="card__category" id="card__high" value="high" class="r-category hidden" onchange="selectPriority(event)">
+								<label class="category category--high" for="card__high">
+									High
+								</label>
+							</div>
+						</div>
+						<div class="card__content">
+
+							<p class="card__name">Card 1</p>
+							<div class="bttns bttns--normal">
+								<button class="card__edit" onclick="editCard(event)">
+									<i class="fa fa-pen"></i>
+								</button>
+								<button class="card__delete" onclick="deleteCard(event)">
+									<i class="fa fa-trash-alt"></i>
+								</button>
+							</div>
+
+							<div class="bttns bttns--edit hidden">
+								<button class="card__confirm" onclick="confirmEdit(event)">
+									<i class="fa fa-check"></i>
+								</button>
+								<button class="card__cancel" onclick="cancelEdit(event)">
+									<i class="fa fa-times"></i>
+								</button>
+
+							</div>
+						</div>
+					</div>
 				</div>
+
+				<div class="list__footer">
+					<input type="text" class="card__input" placeholder="What do you need to do?">
+					<button class="card__add" onclick="addCard(event)" >+ Add a Card</button>
+
+					<div class="list__categories">
+						<input type="radio" name="list__category" id="low" value="low" class="r-category hidden" checked>
+						<label class="category category--low" for="low">
+							Low
+						</label>
+						<input type="radio" name="list__category" id="medium" value="medium" class="r-category hidden">
+						<label class="category category--medium" for="medium">
+							Medium
+						</label>
+						<input type="radio" name="list__category" id="high" value="high" class="r-category hidden">
+						<label class="category category--high" for="high">
+							High
+						</label>
+					</div>
+				</div>
+
+			</div>
+			<div class="move">
+				<button class="move__bttn" onclick="moveListLeft(event)">
+					<i class="fa fa-arrow-left"></i>
+				</button>
+				<button class="move__bttn" onclick="moveListRight(event)">
+					<i class="fa fa-arrow-right"></i>
+				</button>
 			</div>
 		</div>
 
