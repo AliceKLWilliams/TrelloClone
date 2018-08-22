@@ -12,6 +12,20 @@ window.onload = loadData;
 
 let lastCard, shadowDiv, lastMovedCard;
 
+document.addEventListener("dragend", () => {
+	if(!lastMovedCard){
+		return;
+	}
+
+	let element = document.querySelector(`div[data-time='${lastMovedCard}']`);
+
+	shadowDiv.parentNode.removeChild(shadowDiv);
+	element.classList.remove("card--hidden");
+
+	lastMovedCard = null;
+	
+});
+
 
 board.addEventListener("dragstart", (event) => {
 	if(event.target.classList){
