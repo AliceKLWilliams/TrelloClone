@@ -44,9 +44,6 @@
 	&__category{
 		align-self: stretch;
 		width:7px;
-
-		height:40px;
-
 		background-color:#eee;
 		border-radius: 5px;
 
@@ -63,6 +60,16 @@
 		&--high{
 			background-color: #b71c1c;
 		}
+	}
+
+	
+	&__input{
+		border:none;
+		padding:0.5em;
+	}
+
+	&__add{
+		float:right;
 	}
 
 }

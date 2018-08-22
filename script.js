@@ -10,7 +10,40 @@ const listCopy = document.querySelector(".list").cloneNode(true);
 
 window.onload = loadData;
 
-let lastCard, shadowDiv;
+let lastCard, shadowDiv, lastMovedCard;
+
+
+board.addEventListener("dragstart", (event) => {
+	if(event.target.classList){
+		if (event.target.classList.contains("card")) {
+
+			let dragTime = (new Date()).getTime();
+			event.target.dataset.time = dragTime;
+			lastMovedCard = dragTime;
+
+			event.dataTransfer.setData("text", dragTime);
+			event.dataTransfer.effectAllowed = "move";
+
+			setTimeout(()=>{
+				event.target.classList.add("card--hidden");
+			},1);
+
+			shadowDiv = document.createElement("div");
+			shadowDiv.style.height = `${event.target.clientHeight}px`;
+			shadowDiv.style.width = `${event.target.clientWidth}px`;
+
+			shadowDiv.classList.add("card--shadow");
+		} else if(event.target.classList.contains("list")){
+			console.log("list drag");
+		}
+	}
+});
+
+board.addEventListener("dragover", () => {
+	event.preventDefault();
+	event.dataTransfer.dropEffect = "move";
+});
+
 
 function addList(){
 	let number = (new Date()).getTime();
@@ -22,40 +55,14 @@ function addList(){
 }
 
 
-board.addEventListener("dragstart", (event) => {
-	if (event.target.classList.contains("card")) {
-
-		let dragTime = (new Date()).getTime();
-		event.target.dataset.time = dragTime;
-
-		event.dataTransfer.setData("text", dragTime);
-		event.dataTransfer.effectAllowed = "move";
-
-		setTimeout(()=>{
-			event.target.classList.add("card--hidden");
-		},1);
-
-		shadowDiv = document.createElement("div");
-		shadowDiv.style.height = `${event.target.clientHeight}px`;
-		shadowDiv.style.width = `${event.target.clientWidth}px`;
-
-		shadowDiv.classList.add("card--shadow");
-	}
-});
-
-board.addEventListener("dragover", () => {
-	event.preventDefault();
-	event.dataTransfer.dropEffect = "move";
-});
-
 function addCard(e) {
 	const list = e.target.closest(".list");
 
-	if(list.querySelector(".new__text").value.length == 0){
+	if(list.querySelector(".card__input").value.length == 0){
 		return;
 	}
 
-	let cardName = list.querySelector(".new__text").value;
+	let cardName = list.querySelector(".card__input").value;
 
 	let radioButtons = Array.from(list.querySelectorAll(".r-category"));
 
@@ -63,10 +70,13 @@ function addCard(e) {
 
 	createCard(cardName, value, list);
 
-	list.querySelector(".new__text").value = "";
+	list.querySelector(".card__input").value = "";
 }
 
 function contentDrop(event) {
+	if(event.dataTransfer.getData("text") != lastMovedCard){
+		return;
+	}
 
 	event.preventDefault();
 
@@ -100,17 +110,24 @@ function contentDrop(event) {
 	element.classList.remove("card--hidden");
 	shadowDiv.parentNode.removeChild(shadowDiv);
 	
-	saveContent();
+	saveData();
 
 }
 
-function dragList(event){
+function dragOverList(event){
+	if(event.dataTransfer.getData("text") != lastMovedCard){
+		return;
+	}
+
 	if(!(event.target.classList.contains("card--shadow"))){
 		event.currentTarget.querySelector(".list__content").appendChild(shadowDiv);
 	}
 }
 
-function handleDropList(event){
+function dropOnList(event){
+	if(event.dataTransfer.getData("text") != lastMovedCard){
+		return;
+	}
 
 	let data = event.dataTransfer.getData("text");
 	let element = document.querySelector(`div[data-time='${data}']`);
@@ -122,7 +139,11 @@ function handleDropList(event){
 }
 
 
-function cardDragOver(event){
+function dragOverCard(event){
+	if(event.dataTransfer.getData("text") != lastMovedCard){
+		return;
+	}
+
 	event.stopPropagation();
 
 	lastCard = event.currentTarget;
@@ -165,7 +186,7 @@ function editCard(){
 	showEditButtons(card);
 }
 
-function confirmEdit(event){
+function confirmCardEdit(event){
 	let card = event.currentTarget.closest(".card");
 	let editText = card.querySelector(".card__input");
 
@@ -182,11 +203,11 @@ function confirmEdit(event){
 
 	card.setAttribute("draggable", "true");
 
-	saveContent();
+	saveData();
 
 }
 
-function cancelEdit(event){
+function cancelCardEdit(event){
 	let card = event.currentTarget.closest(".card");
 
 	let editText = card.querySelector(".card__input");
@@ -201,7 +222,7 @@ function cancelEdit(event){
 	card.setAttribute("draggable", "true");
 }
 
-function saveContent(){
+function saveData(){
 	localStorage.clear();
 
 	const lists = document.querySelectorAll(".list");
@@ -269,8 +290,8 @@ function createList(listName, cards, number){
 	const newList = listCopy.cloneNode(true);
 	newList.querySelector(".card__add").addEventListener("click", addCard);
 
-	newList.addEventListener("dragover", dragList);
-	newList.addEventListener("drop", handleDropList);
+	newList.addEventListener("dragover", dragOverList);
+	newList.addEventListener("drop", dropOnList);
 
 	newList.querySelector(".list__content").addEventListener("drop", contentDrop);
 
@@ -287,7 +308,7 @@ function createList(listName, cards, number){
 		i++;
 	});
 
-	saveContent();
+	saveData();
 
 	return newList;
 
@@ -308,20 +329,20 @@ function createCard(cardName, category, parentList, number = (new Date()).getTim
 		}
 	});
 
-	newCard.addEventListener("dragover", cardDragOver);
+	newCard.addEventListener("dragover", dragOverCard);
 
 	renameCategories(newCard, number);
 
 	parentList.querySelector(".list__content").appendChild(newCard);
 
-	saveContent();
+	saveData();
 }
 
 function deleteCard(event){
 	let card = event.currentTarget.closest(".card");
 	card.parentNode.removeChild(card);
 
-	saveContent();
+	saveData();
 }
 
 function deleteList(event){
@@ -329,7 +350,7 @@ function deleteList(event){
 
 	list.parentNode.removeChild(list);
 
-	saveContent();
+	saveData();
 }
 
 function editList(event){
@@ -348,7 +369,7 @@ function editList(event){
 	showEditButtons(list);
 }
 
-function cancelList(event){
+function cancelListEdit(event){
 	const list = event.currentTarget.closest(".list");
 	const listNameNode = list.querySelector(".list__name");
 	
@@ -360,7 +381,7 @@ function cancelList(event){
 	showNormalButtons(list);
 }
 
-function confirmList(event){
+function confirmListEdit(event){
 	const list = event.currentTarget.closest(".list");
 	const listNameNode = list.querySelector(".list__name");
 
@@ -372,7 +393,7 @@ function confirmList(event){
 
 	showNormalButtons(list);
 
-	saveContent();
+	saveData();
 }
 
 function showNormalButtons(element){
@@ -400,7 +421,7 @@ function sortList(event){
 		listContent.appendChild(card);
 	});
 
-	saveContent();
+	saveData();
 }
 
 function compareCards(a, b){
@@ -421,7 +442,7 @@ function compareCards(a, b){
 	return 0;
 }
 
-function selectCardRadio(event){
+function selectPriority(event){
 	let radioButton = event.currentTarget;
 	let card = radioButton.closest(".card");
 
@@ -434,5 +455,5 @@ function selectCardRadio(event){
 	cardCategory.classList.remove(`card__category--${prevCategory}`);
 	cardCategory.classList.add(`card__category--${radioButton.value}`);
 
-	saveContent();
+	saveData();
 }
