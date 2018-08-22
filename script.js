@@ -21,7 +21,6 @@ board.addEventListener("dragstart", (event) => {
 			event.target.dataset.time = dragTime;
 			lastMovedCard = dragTime;
 
-			event.dataTransfer.setData("text", dragTime);
 			event.dataTransfer.effectAllowed = "move";
 
 			setTimeout(()=>{
@@ -33,8 +32,6 @@ board.addEventListener("dragstart", (event) => {
 			shadowDiv.style.width = `${event.target.clientWidth}px`;
 
 			shadowDiv.classList.add("card--shadow");
-		} else if(event.target.classList.contains("list")){
-			console.log("list drag");
 		}
 	}
 });
@@ -74,7 +71,7 @@ function addCard(e) {
 }
 
 function contentDrop(event) {
-	if(event.dataTransfer.getData("text") != lastMovedCard){
+	if(!lastMovedCard){
 		return;
 	}
 
@@ -82,8 +79,7 @@ function contentDrop(event) {
 
 	event.stopPropagation();
 
-	let data = event.dataTransfer.getData("text");
-	let element = document.querySelector(`div[data-time='${data}']`);
+	let element = document.querySelector(`div[data-time='${lastMovedCard}']`);
 
 	let numCards = event.currentTarget.querySelectorAll(".card").length;
 
@@ -110,12 +106,14 @@ function contentDrop(event) {
 	element.classList.remove("card--hidden");
 	shadowDiv.parentNode.removeChild(shadowDiv);
 	
+	lastMovedCard = null;
+
 	saveData();
 
 }
 
 function dragOverList(event){
-	if(event.dataTransfer.getData("text") != lastMovedCard){
+	if(!lastMovedCard){
 		return;
 	}
 
@@ -125,22 +123,23 @@ function dragOverList(event){
 }
 
 function dropOnList(event){
-	if(event.dataTransfer.getData("text") != lastMovedCard){
+	if(!lastMovedCard){
 		return;
 	}
 
-	let data = event.dataTransfer.getData("text");
-	let element = document.querySelector(`div[data-time='${data}']`);
+	let element = document.querySelector(`div[data-time='${lastMovedCard}']`);
 
 	event.currentTarget.querySelector(".list__content").appendChild(element);
 
 	shadowDiv.parentNode.removeChild(shadowDiv);
 	element.classList.remove("card--hidden");
+
+	lastMovedCard = null;
 }
 
 
 function dragOverCard(event){
-	if(event.dataTransfer.getData("text") != lastMovedCard){
+	if(!lastMovedCard){
 		return;
 	}
 
