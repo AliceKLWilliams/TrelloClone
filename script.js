@@ -1,17 +1,26 @@
 const board = document.querySelector(".board");
 
-const originalCard = document.querySelector(".card--original");
-
-const cardCopy = originalCard.cloneNode(true);
-cardCopy.classList.remove("card--original");
-originalCard.parentNode.removeChild(originalCard);
-
-const listCopy = document.querySelector(".list__container").cloneNode(true);
+let lastCardHovered, shadowDiv, lastMovedCard, cardCopy, listCopy;
 
 window.onload = loadData;
+copyElements();
 
-let lastCard, shadowDiv, lastMovedCard;
+function copyElements(){
+	// Copy the card element
+	const originalCard = document.querySelector(".card--original");
+	cardCopy = originalCard.cloneNode(true);
+	cardCopy.classList.remove("card--original");
+	originalCard.parentNode.removeChild(originalCard);
 
+	// Copy the list element
+	listCopy = document.querySelector(".list__container").cloneNode(true);
+}
+
+//
+// DRAG END HANDLER
+//
+
+// Event handler if the drag is cancelled
 document.addEventListener("dragend", () => {
 	if(!lastMovedCard){
 		return;
@@ -23,10 +32,11 @@ document.addEventListener("dragend", () => {
 	element.classList.remove("card--hidden");
 
 	lastMovedCard = null;
-	
 });
 
-
+//
+// DRAG START HANDLER
+//
 board.addEventListener("dragstart", (event) => {
 	if(event.target.classList){
 		if (event.target.classList.contains("card")) {
@@ -37,10 +47,12 @@ board.addEventListener("dragstart", (event) => {
 
 			event.dataTransfer.effectAllowed = "move";
 
+			// Hide original card
 			setTimeout(()=>{
 				event.target.classList.add("card--hidden");
 			},1);
 
+			// Create shadow div to show position
 			shadowDiv = document.createElement("div");
 			shadowDiv.style.height = `${event.target.clientHeight}px`;
 			shadowDiv.style.width = `${event.target.clientWidth}px`;
@@ -56,64 +68,55 @@ board.addEventListener("dragover", () => {
 });
 
 
-function addList(){
-	let number = (new Date()).getTime();
-	const numLists = document.querySelectorAll(".list").length;
-
-	const newList = createList(`List ${numLists+1}`, [], number);
-
-	newList.querySelector(".list__edit").click();
-}
+//
+//	DROP HANDLERS
+//
 
 
-function addCard(e) {
-	const list = e.target.closest(".list");
-
-	if(list.querySelector(".card__input").value.length == 0){
+// Drop handler on '.list' element
+function handleDropOnList(event){
+	if(!lastMovedCard){
 		return;
 	}
 
-	let cardName = list.querySelector(".card__input").value;
+	let element = document.querySelector(`div[data-time='${lastMovedCard}']`);
+	event.currentTarget.querySelector(".list__content").appendChild(element);
 
-	let radioButtons = Array.from(list.querySelector(".list__categories").querySelectorAll(".r-category"));
+	shadowDiv.parentNode.removeChild(shadowDiv);
+	element.classList.remove("card--hidden");
 
-	let value = radioButtons.length && radioButtons.find(r => r.checked).value;
-
-	createCard(cardName, value, list);
-
-	list.querySelector(".card__input").value = "";
+	lastMovedCard = null;
 }
 
-function contentDrop(event) {
+// Drop event on the '.list__content' element
+function handleDropOnContent(event) {
 	if(!lastMovedCard){
 		return;
 	}
 
 	event.preventDefault();
-
 	event.stopPropagation();
 
 	let element = document.querySelector(`div[data-time='${lastMovedCard}']`);
-
 	let numCards = event.currentTarget.querySelectorAll(".card").length;
 
-	if(numCards == 0 || lastCard == null){
+	if(numCards == 0 || lastCardHovered == null){
 		event.currentTarget.appendChild(element);
 	} else {
-		let card = lastCard;
 
-		let y = card.getBoundingClientRect().top;
+		// Determine cursor position
+		let y = lastCardHovered.getBoundingClientRect().top;
 		let offset = event.pageY - y;
 
-		let height = card.clientHeight;
+		let height = lastCardHovered.clientHeight;
 		let boundary = height/2;
 
 		if(offset <= boundary){
 			// Insert the card before
-			card.parentNode.insertBefore(element, card);
+			lastCardHovered.parentNode.insertBefore(element, lastCardHovered);
 		} else{
 			// Insert the card after
-			card.parentNode.insertBefore(element, card.nextSibling);
+			lastCardHovered.parentNode.insertBefore(element, lastCardHovered.nextSibling);
 		}
 	}
 
@@ -123,10 +126,14 @@ function contentDrop(event) {
 	lastMovedCard = null;
 
 	saveData();
-
 }
 
-function dragOverList(event){
+//
+//	DRAG OVER HANDLERS
+//
+
+// Drag over handler on the '.list' element
+function handleDragOverList(event){
 	if(!lastMovedCard){
 		return;
 	}
@@ -136,23 +143,7 @@ function dragOverList(event){
 	}
 }
 
-function dropOnList(event){
-	if(!lastMovedCard){
-		return;
-	}
-
-	let element = document.querySelector(`div[data-time='${lastMovedCard}']`);
-
-	event.currentTarget.querySelector(".list__content").appendChild(element);
-
-	shadowDiv.parentNode.removeChild(shadowDiv);
-	element.classList.remove("card--hidden");
-
-	lastMovedCard = null;
-}
-
-
-function dragOverCard(event){
+function handleDragOverCard(event){
 	if(!lastMovedCard){
 		return;
 	}
@@ -160,56 +151,62 @@ function dragOverCard(event){
 	event.preventDefault();
 	event.stopPropagation();
 
-	lastCard = event.currentTarget;
-	
-	let card = lastCard;
+	// Keep track of the last card hovered over
+	lastCardHovered = event.currentTarget;
 
-	let y = card.getBoundingClientRect().top;
+	// Determine cursor position
+	let y = lastCardHovered.getBoundingClientRect().top;
 	let offset = event.pageY - y;
 
-	let height = card.clientHeight;
+	let height = lastCardHovered.clientHeight;
 	let boundary = height/2;
 
 
 	if(offset <= boundary){
-		// Insert the card before
-		card.parentNode.insertBefore(shadowDiv, card);
+		// Insert the shadowDiv before
+		lastCardHovered.parentNode.insertBefore(shadowDiv, lastCardHovered);
 	} else{
-		// Insert the card after
-		card.parentNode.insertBefore(shadowDiv, card.nextSibling);
+		// Insert the shadowDiv after
+		lastCardHovered.parentNode.insertBefore(shadowDiv, lastCardHovered.nextSibling);
 	}
 }
+
+//
+//	EDIT CARD HANDLERS
+//
 
 
 function editCard(){
 	event.stopPropagation();
-	let card = event.currentTarget.closest(".card");
-	let cardNameElement = card.querySelector(".card__name");
 
+	const card = event.currentTarget.closest(".card");
+	const cardNameElement = card.querySelector(".card__name");
+
+	// Cannot drag card while editing
 	card.setAttribute("draggable", "false");
-
-	let currValue = cardNameElement.textContent;
 
 	cardNameElement.classList.add("hidden");
 
-	let editText = document.createElement("input");
+	// Add input element
+	const editText = document.createElement("input");
+	const currValue = cardNameElement.textContent;
 	editText.classList.add("card__input");
 	editText.value = currValue;
-
 	cardNameElement.parentNode.insertBefore(editText, cardNameElement.nextSibling);
 
 	showEditButtons(card);
 }
 
 function confirmCardEdit(event){
-	let card = event.currentTarget.closest(".card");
-	let editText = card.querySelector(".card__input");
+	const card = event.currentTarget.closest(".card");
+	const editTextElement = card.querySelector(".card__input");
 
-	let newVal = editText.value;
+	const newVal = editTextElement.value;
 
-	editText.parentNode.removeChild(editText);
+	editTextElement.parentNode.removeChild(editTextElement);
 
-	let cardName = card.querySelector("p");
+	// Rename card
+	const cardName = card.querySelector("p");
 	cardName.textContent = newVal;
 
 	cardName.classList.remove("hidden");
@@ -219,23 +216,73 @@ function confirmCardEdit(event){
 	card.setAttribute("draggable", "true");
 
 	saveData();
-
 }
 
 function cancelCardEdit(event){
-	let card = event.currentTarget.closest(".card");
-
-	let editText = card.querySelector(".card__input");
+	const card = event.currentTarget.closest(".card");
+	const editText = card.querySelector(".card__input");
 
 	editText.parentNode.removeChild(editText);
 
-	let cardName = card.querySelector("p");
+	const cardName = card.querySelector("p");
 	cardName.classList.remove("hidden");
 
 	showNormalButtons(card);
 
 	card.setAttribute("draggable", "true");
 }
+
+//
+//	EDIT LIST HANDLERS
+//
+
+function editList(event){
+	const list = event.currentTarget.closest(".list");
+	const listNameElement = list.querySelector(".list__name");
+	const currName = listNameElement.textContent;
+
+	listNameElement.classList.add("hidden");
+
+	// Rename list
+	const textEdit = document.createElement("input");
+	textEdit.className = "list__input-name";
+	textEdit.value = currName;
+	listNameElement.parentNode.insertBefore(textEdit, listNameElement.nextSibling);
+
+	showEditButtons(list);
+}
+
+function cancelListEdit(event){
+	const list = event.currentTarget.closest(".list");
+	const listNameElement = list.querySelector(".list__name");
+	
+	listNameElement.classList.remove("hidden");
+
+	const input = list.querySelector(".list__input-name");
+	input.parentNode.removeChild(input);
+
+	showNormalButtons(list);
+}
+
+function confirmListEdit(event){
+	const list = event.currentTarget.closest(".list");
+	const listNameElement = list.querySelector(".list__name");
+
+	const input = list.querySelector(".list__input-name");
+	input.parentNode.removeChild(input);
+
+	listNameElement.textContent = input.value;
+	listNameElement.classList.remove("hidden");
+
+	showNormalButtons(list);
+
+	saveData();
+}
+
+//
+// STORAGE FUNCTIONS
+//
+
 
 function saveData(){
 	localStorage.clear();
@@ -269,12 +316,14 @@ function saveData(){
 }
 
 function loadData(){
-	let listArr = JSON.parse(localStorage.getItem("board"));
+	const listArr = JSON.parse(localStorage.getItem("board"));
 	
 	if(listArr){
-		let originalList = document.querySelector(".list__container");
+		// Remove original list used for copying
+		const originalList = document.querySelector(".list__container");
 		originalList.parentNode.removeChild(originalList);
 
+		// Create lists
 		let i = 1;
 		listArr.forEach(listObj => {
 			createList(listObj.name, listObj.cards, i);
@@ -285,141 +334,12 @@ function loadData(){
 
 }
 
-function renameCategories(list, number){
-	const radios = Array.from(list.querySelectorAll('input[name*=category]'));
-	radios.forEach(radio => {
-		radio.setAttribute("name", radio.getAttribute("name") + `-${number}`);
-	});
 
-	radios.forEach(radio => {
-		radio.setAttribute("id", radio.getAttribute("id") + `-${number}`);
-	});
 
-	const labels = [...list.querySelectorAll(".category")];
-	labels.forEach(label => {
-		label.setAttribute("for", label.getAttribute("for") + `-${number}`);
-	});
-}
+//
+//	SORTING HANDLERS
+//
 
-function createList(listName, cards, number){
-	const newList = listCopy.cloneNode(true);
-	newList.querySelector(".card__add").addEventListener("click", addCard);
-
-	newList.addEventListener("dragover", dragOverList);
-	newList.addEventListener("drop", dropOnList);
-
-	newList.querySelector(".list__content").addEventListener("drop", contentDrop);
-
-	newList.querySelector(".list__name").textContent = listName;
-
-	renameCategories(newList.querySelector(".list__footer"), number);
-
-	const listAdd = document.querySelector(".list__add");
-	board.insertBefore(newList, listAdd);
-
-	let i = 0;
-	cards.forEach(card => {
-		createCard(card.name, card.category, newList, `${number}-${i}`);
-		i++;
-	});
-
-	saveData();
-
-	return newList;
-
-}
-
-function createCard(cardName, category, parentList, number = (new Date()).getTime()){
-	const newCard = cardCopy.cloneNode(true);
-
-	newCard.querySelector(".card__name").textContent = cardName;
-	newCard.querySelector(".card__category").classList.add(`card__category--${category}`);
-
-	newCard.dataset.category = category;
-
-	let radios = newCard.querySelectorAll("input[name*=category]");
-	[...radios].forEach(radio => {
-		if(radio.value == category){
-			radio.checked = true;
-		}
-	});
-
-	newCard.addEventListener("dragover", dragOverCard);
-
-	renameCategories(newCard, number);
-
-	parentList.querySelector(".list__content").appendChild(newCard);
-
-	saveData();
-}
-
-function deleteCard(event){
-	let card = event.currentTarget.closest(".card");
-	card.parentNode.removeChild(card);
-
-	saveData();
-}
-
-function deleteList(event){
-	const list = event.currentTarget.closest(".list__container");
-
-	list.parentNode.removeChild(list);
-
-	saveData();
-}
-
-function editList(event){
-	const list = event.currentTarget.closest(".list");
-	const listNameNode = list.querySelector(".list__name");
-	const currName = listNameNode.textContent;
-
-	listNameNode.classList.add("hidden");
-
-	const textEdit = document.createElement("input");
-	textEdit.className = "list__input-name";
-	textEdit.value = currName;
-
-	listNameNode.parentNode.insertBefore(textEdit, listNameNode.nextSibling);
-
-	showEditButtons(list);
-}
-
-function cancelListEdit(event){
-	const list = event.currentTarget.closest(".list");
-	const listNameNode = list.querySelector(".list__name");
-	
-	listNameNode.classList.remove("hidden");
-
-	const input = list.querySelector(".list__input-name");
-	input.parentNode.removeChild(input);
-
-	showNormalButtons(list);
-}
-
-function confirmListEdit(event){
-	const list = event.currentTarget.closest(".list");
-	const listNameNode = list.querySelector(".list__name");
-
-	const input = list.querySelector(".list__input-name");
-	input.parentNode.removeChild(input);
-
-	listNameNode.textContent = input.value;
-	listNameNode.classList.remove("hidden");
-
-	showNormalButtons(list);
-
-	saveData();
-}
-
-function showNormalButtons(element){
-	element.querySelector(".bttns--normal").classList.remove("hidden");
-	element.querySelector(".bttns--edit").classList.add("hidden");
-}
-
-function showEditButtons(element){
-	element.querySelector(".bttns--normal").classList.add("hidden");
-	element.querySelector(".bttns--edit").classList.remove("hidden");
-}
 
 function sortList(event){
 	const list = event.currentTarget.closest(".list");
@@ -428,10 +348,12 @@ function sortList(event){
 
 	cards.sort(compareCards);
 
+	// Remove all cards
 	while(listContent.firstChild){
 		listContent.removeChild(listContent.firstChild);
 	}
 
+	// Add cards in sorted order
 	cards.forEach(card => {
 		listContent.appendChild(card);
 	});
@@ -439,6 +361,7 @@ function sortList(event){
 	saveData();
 }
 
+// Sorting function for priority sort
 function compareCards(a, b){
 	let priorities = {
 		low:1,
@@ -457,25 +380,13 @@ function compareCards(a, b){
 	return 0;
 }
 
-function selectPriority(event){
-	let radioButton = event.currentTarget;
-	let card = radioButton.closest(".card");
-
-	let prevCategory = card.dataset.category;
-
-	card.dataset.category = radioButton.value;
-
-	let cardCategory = card.querySelector(".card__category");
-
-	cardCategory.classList.remove(`card__category--${prevCategory}`);
-	cardCategory.classList.add(`card__category--${radioButton.value}`);
-
-	saveData();
-}
+//
+// LIST MOVEMENT
+//
 
 function moveListLeft(event){
-	let list = event.target.closest(".list__container");
-	let prevList = list.previousSibling;
+	const list = event.target.closest(".list__container");
+	const prevList = list.previousSibling;
 
 	if(prevList && prevList.classList && prevList.classList.contains("list__container")){
 		list.parentNode.insertBefore(list, prevList);
@@ -483,10 +394,171 @@ function moveListLeft(event){
 }
 
 function moveListRight(event){
-	let list = event.target.closest(".list__container");
-	let nextList = list.nextSibling;
+	const list = event.target.closest(".list__container");
+	const nextList = list.nextSibling;
 
 	if(nextList.classList.contains("list__container")){
 		nextList.parentNode.insertBefore(nextList, list);
 	}
+}
+
+//
+// LIST CREATION / DELETION
+//
+
+function addList(){
+	const identifier = (new Date()).getTime();
+	const numLists = document.querySelectorAll(".list").length;
+
+	const newList = createList(`List ${numLists+1}`, [], identifier);
+
+	// Immediately prompt to rename list
+	newList.querySelector(".list__edit").click();
+}
+
+
+function createList(listName, cards, number){
+	const newList = listCopy.cloneNode(true);
+	newList.querySelector(".card__add").addEventListener("click", addCard);
+
+	// Add event listeners
+	newList.addEventListener("dragover", handleDragOverList);
+	newList.addEventListener("drop", handleDropOnList);
+	newList.querySelector(".list__content").addEventListener("drop", handleDropOnContent);
+
+	newList.querySelector(".list__name").textContent = listName;
+
+	renameCategories(newList.querySelector(".list__footer"), number);
+
+	// Add list to end of board
+	const listAdd = document.querySelector(".list__add");
+	board.insertBefore(newList, listAdd);
+
+	// Create the list's cards
+	let i = 0;
+	cards.forEach(card => {
+		createCard(card.name, card.category, newList, `${number}-${i}`);
+		i++;
+	});
+
+	saveData();
+
+	return newList;
+}
+
+
+function deleteList(event){
+	const list = event.currentTarget.closest(".list__container");
+	list.parentNode.removeChild(list);
+
+	saveData();
+}
+
+//
+// CARD CREATION / DELETION
+//
+
+function addCard(e) {
+	const list = e.target.closest(".list");
+
+	// Only continue if we have a card name
+	if(list.querySelector(".card__input").value.length == 0){
+		return;
+	}
+
+	let cardName = list.querySelector(".card__input").value;
+
+	// Find the card priority
+	let radioButtons = Array.from(list.querySelector(".list__categories").querySelectorAll(".r-category"));
+	let value = radioButtons.length && radioButtons.find(r => r.checked).value;
+
+	createCard(cardName, value, list);
+
+	// Reset input element text
+	list.querySelector(".card__input").value = "";
+}
+
+
+function createCard(cardName, category, parentList, number = (new Date()).getTime()){
+	const newCard = cardCopy.cloneNode(true);
+
+	newCard.querySelector(".card__name").textContent = cardName;
+	newCard.querySelector(".card__category").classList.add(`card__category--${category}`);
+
+	newCard.dataset.category = category;
+
+	// Check appropriate priority radio button
+	const radios = newCard.querySelectorAll("input[name*=category]");
+	[...radios].forEach(radio => {
+		if(radio.value == category){
+			radio.checked = true;
+		}
+	});
+	renameCategories(newCard, number);
+
+	newCard.addEventListener("dragover", handleDragOverCard);
+
+	parentList.querySelector(".list__content").appendChild(newCard);
+
+	saveData();
+}
+
+function deleteCard(event){
+	const card = event.currentTarget.closest(".card");
+	card.parentNode.removeChild(card);
+
+	saveData();
+}
+
+//
+// PRIORITY FUNCTIONS
+//
+
+// Function to rename radio buttons attrs as they need to be unique
+function renameCategories(list, number){
+	const radios = Array.from(list.querySelectorAll('input[name*=category]'));
+	radios.forEach(radio => {
+		radio.setAttribute("name", radio.getAttribute("name") + `-${number}`);
+	});
+
+	radios.forEach(radio => {
+		radio.setAttribute("id", radio.getAttribute("id") + `-${number}`);
+	});
+
+	const labels = [...list.querySelectorAll(".category")];
+	labels.forEach(label => {
+		label.setAttribute("for", label.getAttribute("for") + `-${number}`);
+	});
+}
+
+function selectPriority(event){
+	const radioButton = event.currentTarget;
+	const card = radioButton.closest(".card");
+
+	const prevCategory = card.dataset.category;
+
+	// Set new category on card
+	card.dataset.category = radioButton.value;
+
+	const cardCategory = card.querySelector(".card__category");
+
+	cardCategory.classList.remove(`card__category--${prevCategory}`);
+	cardCategory.classList.add(`card__category--${radioButton.value}`);
+
+	saveData();
+}
+
+
+//
+// OTHER FUNCTIONS
+//
+
+function showNormalButtons(element){
+	element.querySelector(".bttns--normal").classList.remove("hidden");
+	element.querySelector(".bttns--edit").classList.add("hidden");
+}
+
+function showEditButtons(element){
+	element.querySelector(".bttns--normal").classList.add("hidden");
+	element.querySelector(".bttns--edit").classList.remove("hidden");
 }
